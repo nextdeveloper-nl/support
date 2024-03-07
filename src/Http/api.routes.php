@@ -37,24 +37,6 @@ Route::prefix('support')->group(function () {
         }
     );
 
-    Route::prefix('comments')->group(
-        function () {
-            Route::get('/', 'Comments\CommentsController@index');
-
-            Route::get('{support_comments}/tags ', 'Comments\CommentsController@tags');
-            Route::post('{support_comments}/tags ', 'Comments\CommentsController@saveTags');
-            Route::get('{support_comments}/addresses ', 'Comments\CommentsController@addresses');
-            Route::post('{support_comments}/addresses ', 'Comments\CommentsController@saveAddresses');
-
-            Route::get('/{support_comments}/{subObjects}', 'Comments\CommentsController@relatedObjects');
-            Route::get('/{support_comments}', 'Comments\CommentsController@show');
-
-            Route::post('/', 'Comments\CommentsController@store');
-            Route::patch('/{support_comments}', 'Comments\CommentsController@update');
-            Route::delete('/{support_comments}', 'Comments\CommentsController@destroy');
-        }
-    );
-
     Route::prefix('tests')->group(
         function () {
             Route::get('/', 'Tests\TestsController@index');
@@ -73,5 +55,27 @@ Route::prefix('support')->group(function () {
         }
     );
 
+    Route::prefix('ticket-comments')->group(
+        function () {
+            Route::get('/', 'TicketComments\TicketCommentsController@index');
+
+            Route::get('{support_ticket_comments}/tags ', 'TicketComments\TicketCommentsController@tags');
+            Route::post('{support_ticket_comments}/tags ', 'TicketComments\TicketCommentsController@saveTags');
+            Route::get('{support_ticket_comments}/addresses ', 'TicketComments\TicketCommentsController@addresses');
+            Route::post('{support_ticket_comments}/addresses ', 'TicketComments\TicketCommentsController@saveAddresses');
+
+            Route::get('/{support_ticket_comments}/{subObjects}', 'TicketComments\TicketCommentsController@relatedObjects');
+            Route::get('/{support_ticket_comments}', 'TicketComments\TicketCommentsController@show');
+
+            Route::post('/', 'TicketComments\TicketCommentsController@store');
+            Route::patch('/{support_ticket_comments}', 'TicketComments\TicketCommentsController@update');
+            Route::delete('/{support_ticket_comments}', 'TicketComments\TicketCommentsController@destroy');
+        }
+    );
+
 // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 });
+
+
+
