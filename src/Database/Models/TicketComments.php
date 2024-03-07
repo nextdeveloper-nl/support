@@ -6,33 +6,26 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Model;
 use NextDeveloper\Commons\Database\Traits\Filterable;
-use NextDeveloper\Support\Database\Observers\TicketsObserver;
+use NextDeveloper\Support\Database\Observers\TicketCommentsObserver;
 use NextDeveloper\Commons\Database\Traits\UuidId;
 use NextDeveloper\Commons\Common\Cache\Traits\CleanCache;
 use NextDeveloper\Commons\Database\Traits\Taggable;
 
 /**
- * Tickets model.
+ * TicketComments model.
  *
  * @package  NextDeveloper\Support\Database\Models
  * @property integer $id
  * @property string $uuid
- * @property string $title
- * @property string $description
+ * @property string $comment
  * @property integer $iam_account_id
  * @property integer $iam_user_id
- * @property array $tags
- * @property boolean $is_closed
- * @property integer $level
- * @property integer $priority
- * @property \Carbon\Carbon $response_time
- * @property integer $object_id
- * @property string $object_type
+ * @property integer $support_ticket_id
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon $deleted_at
  */
-class Tickets extends Model
+class TicketComments extends Model
 {
     use Filterable, UuidId, CleanCache, Taggable;
     use SoftDeletes;
@@ -40,7 +33,7 @@ class Tickets extends Model
 
     public $timestamps = true;
 
-    protected $table = 'support_tickets';
+    protected $table = 'support_ticket_comments';
 
 
     /**
@@ -49,17 +42,10 @@ class Tickets extends Model
     protected $guarded = [];
 
     protected $fillable = [
-            'title',
-            'description',
+            'comment',
             'iam_account_id',
             'iam_user_id',
-            'tags',
-            'is_closed',
-            'level',
-            'priority',
-            'response_time',
-            'object_id',
-            'object_type',
+            'support_ticket_id',
     ];
 
     /**
@@ -83,15 +69,8 @@ class Tickets extends Model
      */
     protected $casts = [
     'id' => 'integer',
-    'title' => 'string',
-    'description' => 'string',
-    'tags' => \NextDeveloper\Commons\Database\Casts\TextArray::class,
-    'is_closed' => 'boolean',
-    'level' => 'integer',
-    'priority' => 'integer',
-    'response_time' => 'datetime',
-    'object_id' => 'integer',
-    'object_type' => 'string',
+    'comment' => 'string',
+    'support_ticket_id' => 'integer',
     'created_at' => 'datetime',
     'updated_at' => 'datetime',
     'deleted_at' => 'datetime',
@@ -103,7 +82,6 @@ class Tickets extends Model
      @var array
      */
     protected $dates = [
-    'response_time',
     'created_at',
     'updated_at',
     'deleted_at',
@@ -129,7 +107,7 @@ class Tickets extends Model
         parent::boot();
 
         //  We create and add Observer even if we wont use it.
-        parent::observe(TicketsObserver::class);
+        parent::observe(TicketCommentsObserver::class);
 
         self::registerScopes();
     }
@@ -137,7 +115,7 @@ class Tickets extends Model
     public static function registerScopes()
     {
         $globalScopes = config('support.scopes.global');
-        $modelScopes = config('support.scopes.support_tickets');
+        $modelScopes = config('support.scopes.support_ticket_comments');
 
         if(!$modelScopes) { $modelScopes = [];
         }
@@ -157,5 +135,4 @@ class Tickets extends Model
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
-
 }

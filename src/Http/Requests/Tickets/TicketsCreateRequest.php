@@ -20,8 +20,8 @@ class TicketsCreateRequest extends AbstractFormRequest
         'level' => 'integer',
         'priority' => 'integer',
         'response_time' => 'nullable|date',
-        'object_id' => 'required',
-        'object_type' => 'required|string',
+        'object_id' => 'nullable',
+        'object_type' => 'nullable|string',
         ];
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
