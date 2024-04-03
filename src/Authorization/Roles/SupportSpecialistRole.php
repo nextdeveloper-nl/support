@@ -15,7 +15,7 @@ class SupportSpecialistRole extends AbstractRole implements IAuthorizationRole
 {
     public const NAME = 'support-specialist';
 
-    public const LEVEL = 50;
+    public const LEVEL = 120;
 
     public const DESCRIPTION = 'Support Specialist';
 
