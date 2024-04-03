@@ -15,7 +15,7 @@ class SupportAdminRole extends AbstractRole implements IAuthorizationRole
 {
     public const NAME = 'support-admin';
 
-    public const LEVEL = 50;
+    public const LEVEL = 100;
 
     public const DESCRIPTION = 'Support Admin';
 
@@ -31,13 +31,8 @@ class SupportAdminRole extends AbstractRole implements IAuthorizationRole
     public function apply(Builder $builder, Model $model)
     {
         /**
-         * Here user will be able to list all models, because by default, sales manager can see everybody.
+         * Support admin can see all the tickets that is why we are not filtering anything in here.
          */
-        $ids = AccountManagers::withoutGlobalScopes()
-            ->where('iam_account_id', UserHelper::currentAccount()->id)
-            ->pluck('crm_account_id');
-
-        $builder->whereIn('iam_account_id', $ids);
     }
 
     public function checkPrivileges(Users $users = null)
@@ -97,6 +92,9 @@ class SupportAdminRole extends AbstractRole implements IAuthorizationRole
         if(self::DB_PREFIX === '*') {
             return true;
         }
+
+        dump($column);
+        dump(Str::startsWith($column, self::DB_PREFIX));
 
         if(Str::startsWith($column, self::DB_PREFIX)) {
             return true;
