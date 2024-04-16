@@ -93,9 +93,6 @@ class SupportAdminRole extends AbstractRole implements IAuthorizationRole
             return true;
         }
 
-        dump($column);
-        dump(Str::startsWith($column, self::DB_PREFIX));
-
         if(Str::startsWith($column, self::DB_PREFIX)) {
             return true;
         }
@@ -106,5 +103,10 @@ class SupportAdminRole extends AbstractRole implements IAuthorizationRole
     public function getDbPrefix()
     {
         return self::DB_PREFIX;
+    }
+
+    public function checkRules(Users $users): bool
+    {
+        // TODO: Implement checkRules() method.
     }
 }
