@@ -4,7 +4,7 @@ namespace NextDeveloper\Support\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
-
+            
 
 /**
  * This class automatically puts where clause on database so that use can filter
@@ -12,11 +12,12 @@ use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
  */
 class TicketCommentsQueryFilter extends AbstractQueryFilter
 {
+
     /**
      * @var Builder
      */
     protected $builder;
-
+    
     public function comment($value)
     {
         return $this->builder->where('comment', 'like', '%' . $value . '%');
@@ -72,7 +73,7 @@ class TicketCommentsQueryFilter extends AbstractQueryFilter
 
     public function supportTicketId($value)
     {
-        $supportTicket = \NextDeveloper\Support\Database\Models\Tickets::where('uuid', $value)->first();
+            $supportTicket = \NextDeveloper\Support\Database\Models\Tickets::where('uuid', $value)->first();
 
         if($supportTicket) {
             return $this->builder->where('support_ticket_id', '=', $supportTicket->id);
@@ -80,4 +81,5 @@ class TicketCommentsQueryFilter extends AbstractQueryFilter
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 }
