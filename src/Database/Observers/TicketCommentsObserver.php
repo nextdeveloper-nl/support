@@ -58,11 +58,11 @@ class TicketCommentsObserver
     public function saving(Model $model)
     {
         throw_if(
-            !UserHelper::can('save', $model),
+            !UserHelper::can('create', $model),
             new NotAllowedException('You are not allowed to save this record')
         );
 
-        Events::fire('saving:NextDeveloper\Support\TicketComments', $model);
+        Events::fire('created:NextDeveloper\Support\TicketComments', $model);
     }
 
     /**
