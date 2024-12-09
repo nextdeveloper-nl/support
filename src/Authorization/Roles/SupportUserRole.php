@@ -53,10 +53,10 @@ class SupportUserRole extends AbstractRole implements IAuthorizationRole
             'support_tickets:create',
             'support_tickets:update',
             'support_tickets:close',
-            'support_comments:read',
-            'support_comments:create',
-            'support_comments:update',
-            'support_comments:delete',
+            'support_ticket_comments:read',
+            'support_ticket_comments:create',
+            'support_ticket_comments:update',
+            'support_ticket_comments:delete',
             'support_tests:read',
             'support_tests:create'
         ];
