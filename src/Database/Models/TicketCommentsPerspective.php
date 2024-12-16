@@ -3,36 +3,43 @@
 namespace NextDeveloper\Support\Database\Models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
+use NextDeveloper\Commons\Database\Traits\HasStates;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Model;
 use NextDeveloper\Commons\Database\Traits\Filterable;
-use NextDeveloper\Commons\Database\Traits\HasStates;
-use NextDeveloper\Support\Database\Observers\TicketAuditsObserver;
+use NextDeveloper\Support\Database\Observers\TicketCommentsPerspectiveObserver;
 use NextDeveloper\Commons\Database\Traits\UuidId;
 use NextDeveloper\Commons\Common\Cache\Traits\CleanCache;
 use NextDeveloper\Commons\Database\Traits\Taggable;
 
 /**
- * TicketAudits model.
+ * TicketCommentsPerspective model.
  *
  * @package  NextDeveloper\Support\Database\Models
  * @property integer $id
  * @property string $uuid
- * @property string $comments
+ * @property string $comment
+ * @property integer $iam_account_id
  * @property integer $iam_user_id
- * @property integer $point
+ * @property string $fullname
+ * @property string $email
+ * @property string $phone_number
+ * @property string $pronoun
+ * @property string $name
+ * @property integer $iam_account_type_id
+ * @property integer $support_ticket_id
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon $deleted_at
  */
-class TicketAudits extends Model
+class TicketCommentsPerspective extends Model
 {
     use Filterable, UuidId, CleanCache, Taggable, HasStates;
     use SoftDeletes;
 
     public $timestamps = true;
 
-    protected $table = 'support_ticket_audits';
+    protected $table = 'support_ticket_comments_perspective';
 
 
     /**
@@ -41,9 +48,16 @@ class TicketAudits extends Model
     protected $guarded = [];
 
     protected $fillable = [
-            'comments',
+            'comment',
+            'iam_account_id',
             'iam_user_id',
-            'point',
+            'fullname',
+            'email',
+            'phone_number',
+            'pronoun',
+            'name',
+            'iam_account_type_id',
+            'support_ticket_id',
     ];
 
     /**
@@ -67,8 +81,14 @@ class TicketAudits extends Model
      */
     protected $casts = [
     'id' => 'integer',
-    'comments' => 'string',
-    'point' => 'integer',
+    'comment' => 'string',
+    'fullname' => 'string',
+    'email' => 'string',
+    'phone_number' => 'string',
+    'pronoun' => 'string',
+    'name' => 'string',
+    'iam_account_type_id' => 'integer',
+    'support_ticket_id' => 'integer',
     'created_at' => 'datetime',
     'updated_at' => 'datetime',
     'deleted_at' => 'datetime',
@@ -105,7 +125,7 @@ class TicketAudits extends Model
         parent::boot();
 
         //  We create and add Observer even if we wont use it.
-        parent::observe(TicketAuditsObserver::class);
+        parent::observe(TicketCommentsPerspectiveObserver::class);
 
         self::registerScopes();
     }
@@ -113,7 +133,7 @@ class TicketAudits extends Model
     public static function registerScopes()
     {
         $globalScopes = config('support.scopes.global');
-        $modelScopes = config('support.scopes.support_ticket_audits');
+        $modelScopes = config('support.scopes.support_ticket_comments_perspective');
 
         if(!$modelScopes) { $modelScopes = [];
         }
@@ -132,15 +152,5 @@ class TicketAudits extends Model
         }
     }
 
-    public function users() : \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(\NextDeveloper\IAM\Database\Models\Users::class);
-    }
-    
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
-
-
-
-
-
 }
