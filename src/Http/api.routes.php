@@ -86,6 +86,33 @@ Route::prefix('support')->group(
             }
         );
 
+        Route::prefix('ticket-comments-perspective')->group(
+            function () {
+                Route::get('/', 'TicketCommentsPerspective\TicketCommentsPerspectiveController@index');
+                Route::get('/actions', 'TicketCommentsPerspective\TicketCommentsPerspectiveController@getActions');
+
+                Route::get('{stcp}/tags ', 'TicketCommentsPerspective\TicketCommentsPerspectiveController@tags');
+                Route::post('{stcp}/tags ', 'TicketCommentsPerspective\TicketCommentsPerspectiveController@saveTags');
+                Route::get('{stcp}/addresses ', 'TicketCommentsPerspective\TicketCommentsPerspectiveController@addresses');
+                Route::post('{stcp}/addresses ', 'TicketCommentsPerspective\TicketCommentsPerspectiveController@saveAddresses');
+
+                Route::get('/{stcp}/{subObjects}', 'TicketCommentsPerspective\TicketCommentsPerspectiveController@relatedObjects');
+                Route::get('/{stcp}', 'TicketCommentsPerspective\TicketCommentsPerspectiveController@show');
+
+                Route::post('/', 'TicketCommentsPerspective\TicketCommentsPerspectiveController@store');
+                Route::post('/{stcp}/do/{action}', 'TicketCommentsPerspective\TicketCommentsPerspectiveController@doAction');
+
+                Route::patch('/{stcp}', 'TicketCommentsPerspective\TicketCommentsPerspectiveController@update');
+                Route::delete('/{stcp}', 'TicketCommentsPerspective\TicketCommentsPerspectiveController@destroy');
+            }
+        );
+
         // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
+
+
     }
 );
+

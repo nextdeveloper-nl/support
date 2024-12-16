@@ -33,7 +33,6 @@ class Tests extends Model
     use Filterable, UuidId, CleanCache, Taggable, HasStates;
     use SoftDeletes;
 
-
     public $timestamps = true;
 
     protected $table = 'support_tests';
@@ -143,7 +142,18 @@ class Tests extends Model
         }
     }
 
+    public function actions() : \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(\NextDeveloper\Commons\Database\Models\Actions::class);
+    }
+    
+    public function tickets() : \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(\NextDeveloper\Support\Database\Models\Tickets::class);
+    }
+    
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 
