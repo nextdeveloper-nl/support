@@ -62,7 +62,7 @@ class TicketCommentsObserver
             new NotAllowedException('You are not allowed to save this record')
         );
 
-        Events::fire('created:NextDeveloper\Support\TicketComments', $model);
+        Events::fire('saving:NextDeveloper\Support\TicketComments', $model);
     }
 
     /**

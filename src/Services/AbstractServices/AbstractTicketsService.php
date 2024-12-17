@@ -7,13 +7,11 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
 use NextDeveloper\IAM\Helpers\UserHelper;
-use NextDeveloper\Commons\Common\Cache\CacheHelper;
 use NextDeveloper\Commons\Helpers\DatabaseHelper;
 use NextDeveloper\Commons\Database\Models\AvailableActions;
 use NextDeveloper\Support\Database\Models\Tickets;
 use NextDeveloper\Support\Database\Filters\TicketsQueryFilter;
 use NextDeveloper\Commons\Exceptions\ModelNotFoundException;
-use NextDeveloper\Events\Services\Events;
 use NextDeveloper\Commons\Exceptions\NotAllowedException;
 
 /**
@@ -176,7 +174,7 @@ class AbstractTicketsService
                 $data['iam_account_id']
             );
         }
-            
+
         if(!array_key_exists('iam_account_id', $data)) {
             $data['iam_account_id'] = UserHelper::currentAccount()->id;
         }
@@ -186,18 +184,16 @@ class AbstractTicketsService
                 $data['iam_user_id']
             );
         }
-                    
+
         if(!array_key_exists('iam_user_id', $data)) {
             $data['iam_user_id']    = UserHelper::me()->id;
         }
-            
+
         try {
             $model = Tickets::create($data);
         } catch(\Exception $e) {
             throw $e;
         }
-
-        Events::fire('created:NextDeveloper\Support\Tickets', $model);
 
         return $model->fresh();
     }
@@ -250,8 +246,6 @@ class AbstractTicketsService
                 $data['iam_user_id']
             );
         }
-    
-        Events::fire('updating:NextDeveloper\Support\Tickets', $model);
 
         try {
             $isUpdated = $model->update($data);
@@ -259,8 +253,6 @@ class AbstractTicketsService
         } catch(\Exception $e) {
             throw $e;
         }
-
-        Events::fire('updated:NextDeveloper\Support\Tickets', $model);
 
         return $model->fresh();
     }
@@ -285,8 +277,6 @@ class AbstractTicketsService
                 'Maybe you dont have the permission to update this object?'
             );
         }
-
-        Events::fire('deleted:NextDeveloper\Support\Tickets', $model);
 
         try {
             $model = $model->delete();
