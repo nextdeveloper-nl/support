@@ -60,6 +60,7 @@ class Tickets extends Model
             'response_time',
             'object_id',
             'object_type',
+            'is_public',
     ];
 
     /**
@@ -92,6 +93,7 @@ class Tickets extends Model
     'response_time' => 'datetime',
     'object_id' => 'integer',
     'object_type' => 'string',
+    'is_public' => 'boolean',
     'created_at' => 'datetime',
     'updated_at' => 'datetime',
     'deleted_at' => 'datetime',
