@@ -2,14 +2,14 @@
 
 namespace NextDeveloper\Support\Tests\Database\Models;
 
-use Tests\TestCase;
 use GuzzleHttp\Client;
-use Illuminate\Http\Response;
 use Illuminate\Http\Request;
-use NextDeveloper\Support\Database\Filters\SupportTicketCommentQueryFilter;
-use NextDeveloper\Support\Services\AbstractServices\AbstractSupportTicketCommentService;
+use Illuminate\Http\Response;
 use Illuminate\Pagination\LengthAwarePaginator;
 use League\Fractal\Resource\Collection;
+use NextDeveloper\Support\Database\Filters\SupportTicketCommentQueryFilter;
+use NextDeveloper\Support\Services\AbstractServices\AbstractSupportTicketCommentService;
+use Tests\TestCase;
 
 trait SupportTicketCommentTestTraits
 {
@@ -534,4 +534,5 @@ trait SupportTicketCommentTestTraits
         $this->assertTrue(true);
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 }

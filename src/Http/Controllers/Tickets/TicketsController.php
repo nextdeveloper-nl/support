@@ -3,14 +3,16 @@
 namespace NextDeveloper\Support\Http\Controllers\Tickets;
 
 use Illuminate\Http\Request;
-use NextDeveloper\Support\Http\Controllers\AbstractController;
 use NextDeveloper\Commons\Http\Response\ResponsableFactory;
-use NextDeveloper\Support\Http\Requests\Tickets\TicketsUpdateRequest;
+use NextDeveloper\Commons\Http\Traits\Addresses;
+use NextDeveloper\Commons\Http\Traits\Tags;
 use NextDeveloper\Support\Database\Filters\TicketsQueryFilter;
 use NextDeveloper\Support\Database\Models\Tickets;
-use NextDeveloper\Support\Services\TicketsService;
+use NextDeveloper\Support\Http\Controllers\AbstractController;
 use NextDeveloper\Support\Http\Requests\Tickets\TicketsCreateRequest;
-use NextDeveloper\Commons\Http\Traits\Tags;use NextDeveloper\Commons\Http\Traits\Addresses;
+use NextDeveloper\Support\Http\Requests\Tickets\TicketsUpdateRequest;
+use NextDeveloper\Support\Services\TicketsService;
+
 class TicketsController extends AbstractController
 {
     private $model = Tickets::class;

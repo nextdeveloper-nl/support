@@ -4,7 +4,7 @@ namespace NextDeveloper\Support\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
-        
+            
 
 /**
  * This class automatically puts where clause on database so that use can filter
@@ -40,19 +40,19 @@ class TicketsQueryFilter extends AbstractQueryFilter
     
     public function title($value)
     {
-        return $this->builder->where('title', 'like', '%' . $value . '%');
+        return $this->builder->where('title', 'ilike', '%' . $value . '%');
     }
 
         
     public function description($value)
     {
-        return $this->builder->where('description', 'like', '%' . $value . '%');
+        return $this->builder->where('description', 'ilike', '%' . $value . '%');
     }
 
         
     public function objectType($value)
     {
-        return $this->builder->where('object_type', 'like', '%' . $value . '%');
+        return $this->builder->where('object_type', 'ilike', '%' . $value . '%');
     }
 
         //  This is an alias function of objectType
@@ -89,6 +89,25 @@ class TicketsQueryFilter extends AbstractQueryFilter
     }
 
     
+    public function timeSpent($value)
+    {
+        $operator = substr($value, 0, 1);
+
+        if ($operator != '<' || $operator != '>') {
+            $operator = '=';
+        } else {
+            $value = substr($value, 1);
+        }
+
+        return $this->builder->where('time_spent', $operator, $value);
+    }
+
+        //  This is an alias function of timeSpent
+    public function time_spent($value)
+    {
+        return $this->timeSpent($value);
+    }
+    
     public function isClosed($value)
     {
         return $this->builder->where('is_closed', $value);
@@ -98,6 +117,17 @@ class TicketsQueryFilter extends AbstractQueryFilter
     public function is_closed($value)
     {
         return $this->isClosed($value);
+    }
+     
+    public function isPublic($value)
+    {
+        return $this->builder->where('is_public', $value);
+    }
+
+        //  This is an alias function of isPublic
+    public function is_public($value)
+    {
+        return $this->isPublic($value);
     }
      
     public function responseTimeStart($date)
@@ -208,7 +238,23 @@ class TicketsQueryFilter extends AbstractQueryFilter
     }
 
     
+    public function responsibleUserId($value)
+    {
+            $responsibleUser = \NextDeveloper\IAM\Database\Models\Users::where('uuid', $value)->first();
+
+        if($responsibleUser) {
+            return $this->builder->where('responsible_user_id', '=', $responsibleUser->id);
+        }
+    }
+
+        //  This is an alias function of responsibleUser
+    public function responsible_user_id($value)
+    {
+        return $this->responsibleUser($value);
+    }
+    
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

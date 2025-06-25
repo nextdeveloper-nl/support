@@ -20,13 +20,13 @@ class TestsQueryFilter extends AbstractQueryFilter
     
     public function name($value)
     {
-        return $this->builder->where('name', 'like', '%' . $value . '%');
+        return $this->builder->where('name', 'ilike', '%' . $value . '%');
     }
 
         
     public function result($value)
     {
-        return $this->builder->where('result', 'like', '%' . $value . '%');
+        return $this->builder->where('result', 'ilike', '%' . $value . '%');
     }
 
     
@@ -138,6 +138,7 @@ class TestsQueryFilter extends AbstractQueryFilter
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

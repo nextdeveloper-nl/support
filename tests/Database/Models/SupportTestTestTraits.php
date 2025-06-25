@@ -2,14 +2,14 @@
 
 namespace NextDeveloper\Support\Tests\Database\Models;
 
-use Tests\TestCase;
 use GuzzleHttp\Client;
-use Illuminate\Http\Response;
 use Illuminate\Http\Request;
-use NextDeveloper\Support\Database\Filters\SupportTestQueryFilter;
-use NextDeveloper\Support\Services\AbstractServices\AbstractSupportTestService;
+use Illuminate\Http\Response;
 use Illuminate\Pagination\LengthAwarePaginator;
 use League\Fractal\Resource\Collection;
+use NextDeveloper\Support\Database\Filters\SupportTestQueryFilter;
+use NextDeveloper\Support\Services\AbstractServices\AbstractSupportTestService;
+use Tests\TestCase;
 
 trait SupportTestTestTraits
 {
@@ -554,4 +554,5 @@ trait SupportTestTestTraits
         $this->assertTrue(true);
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 }

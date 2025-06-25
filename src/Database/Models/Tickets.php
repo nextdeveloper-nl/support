@@ -2,15 +2,16 @@
 
 namespace NextDeveloper\Support\Database\Models;
 
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use NextDeveloper\Commons\Common\Cache\Traits\CleanCache;
 use NextDeveloper\Commons\Database\Traits\Filterable;
 use NextDeveloper\Commons\Database\Traits\HasStates;
-use NextDeveloper\Support\Database\Observers\TicketsObserver;
-use NextDeveloper\Commons\Database\Traits\UuidId;
-use NextDeveloper\Commons\Common\Cache\Traits\CleanCache;
 use NextDeveloper\Commons\Database\Traits\Taggable;
+use NextDeveloper\Commons\Database\Traits\UuidId;
+use NextDeveloper\Support\Database\Observers\TicketsObserver;
+use Illuminate\Notifications\Notifiable;
+use NextDeveloper\Commons\Database\Traits\RunAsAdministrator;
 
 /**
  * Tickets model.
@@ -32,10 +33,15 @@ use NextDeveloper\Commons\Database\Traits\Taggable;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon $deleted_at
+ * @property boolean $is_public
+ * @property integer $responsible_user_id
+ * @property integer $time_spent
+ * @property array $watcher_user_ids
+ * @property array $watcher_account_ids
  */
 class Tickets extends Model
 {
-    use Filterable, UuidId, CleanCache, Taggable, HasStates;
+    use Filterable, UuidId, CleanCache, Taggable, HasStates, RunAsAdministrator;
     use SoftDeletes;
 
     public $timestamps = true;
@@ -60,6 +66,11 @@ class Tickets extends Model
             'response_time',
             'object_id',
             'object_type',
+            'is_public',
+            'responsible_user_id',
+            'time_spent',
+            'watcher_user_ids',
+            'watcher_account_ids',
     ];
 
     /**
@@ -95,6 +106,11 @@ class Tickets extends Model
     'created_at' => 'datetime',
     'updated_at' => 'datetime',
     'deleted_at' => 'datetime',
+    'is_public' => 'boolean',
+    'responsible_user_id' => 'integer',
+    'time_spent' => 'integer',
+    'watcher_user_ids' => 'array:integer',
+    'watcher_account_ids' => 'array:integer',
     ];
 
     /**
@@ -172,6 +188,7 @@ class Tickets extends Model
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

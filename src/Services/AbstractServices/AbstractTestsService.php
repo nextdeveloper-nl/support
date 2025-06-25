@@ -2,19 +2,17 @@
 
 namespace NextDeveloper\Support\Services\AbstractServices;
 
-use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use NextDeveloper\IAM\Helpers\UserHelper;
-use NextDeveloper\Commons\Common\Cache\CacheHelper;
-use NextDeveloper\Commons\Helpers\DatabaseHelper;
 use NextDeveloper\Commons\Database\Models\AvailableActions;
-use NextDeveloper\Support\Database\Models\Tests;
-use NextDeveloper\Support\Database\Filters\TestsQueryFilter;
 use NextDeveloper\Commons\Exceptions\ModelNotFoundException;
-use NextDeveloper\Events\Services\Events;
 use NextDeveloper\Commons\Exceptions\NotAllowedException;
+use NextDeveloper\Commons\Helpers\DatabaseHelper;
+use NextDeveloper\Events\Services\Events;
+use NextDeveloper\Support\Database\Filters\TestsQueryFilter;
+use NextDeveloper\Support\Database\Models\Tests;
 
 /**
  * This class is responsible from managing the data for Tests
@@ -64,11 +62,15 @@ class AbstractTestsService
         if($enablePaginate) {
             //  We are using this because we have been experiencing huge security problem when we use the paginate method.
             //  The reason was, when the pagination method was using, somehow paginate was discarding all the filters.
+            $modelCount = $model->count();
+            $page = array_key_exists('page', $params) ? $params['page'] : 1;
+            $items = $model->skip(($page - 1) * $perPage)->take($perPage)->get();
+
             return new \Illuminate\Pagination\LengthAwarePaginator(
-                $model->skip(($request->get('page', 1) - 1) * $perPage)->take($perPage)->get(),
-                $model->count(),
+                $items,
+                $modelCount,
                 $perPage,
-                $request->get('page', 1)
+                $page
             );
         }
 
@@ -182,7 +184,7 @@ class AbstractTestsService
                 $data['common_action_id']
             );
         }
-                        
+
         try {
             $model = Tests::create($data);
         } catch(\Exception $e) {
@@ -242,7 +244,7 @@ class AbstractTestsService
                 $data['common_action_id']
             );
         }
-    
+
         Events::fire('updating:NextDeveloper\Support\Tests', $model);
 
         try {

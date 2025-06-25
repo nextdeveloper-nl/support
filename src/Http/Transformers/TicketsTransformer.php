@@ -5,7 +5,6 @@ namespace NextDeveloper\Support\Http\Transformers;
 use Illuminate\Support\Facades\Cache;
 use NextDeveloper\Commons\Common\Cache\CacheHelper;
 use NextDeveloper\Support\Database\Models\Tickets;
-use NextDeveloper\Commons\Http\Transformers\AbstractTransformer;
 use NextDeveloper\Support\Http\Transformers\AbstractTransformers\AbstractTicketsTransformer;
 
 /**
