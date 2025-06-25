@@ -2,14 +2,13 @@
 
 namespace NextDeveloper\Support\Tests\Database\Models;
 
-use Tests\TestCase;
 use GuzzleHttp\Client;
-use Illuminate\Http\Response;
 use Illuminate\Http\Request;
-use NextDeveloper\Support\Database\Filters\SupportCommentQueryFilter;
-use NextDeveloper\Support\Services\AbstractServices\AbstractSupportCommentService;
+use Illuminate\Http\Response;
 use Illuminate\Pagination\LengthAwarePaginator;
 use League\Fractal\Resource\Collection;
+use NextDeveloper\Support\Database\Filters\SupportCommentQueryFilter;
+use NextDeveloper\Support\Services\AbstractServices\AbstractSupportCommentService;
 
 trait SupportCommentTestTraits
 {

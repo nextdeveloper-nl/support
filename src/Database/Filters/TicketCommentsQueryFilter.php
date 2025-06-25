@@ -20,7 +20,7 @@ class TicketCommentsQueryFilter extends AbstractQueryFilter
     
     public function comment($value)
     {
-        return $this->builder->where('comment', 'like', '%' . $value . '%');
+        return $this->builder->where('comment', 'ilike', '%' . $value . '%');
     }
 
     
@@ -126,6 +126,7 @@ class TicketCommentsQueryFilter extends AbstractQueryFilter
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 

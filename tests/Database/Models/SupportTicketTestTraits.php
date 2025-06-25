@@ -2,14 +2,14 @@
 
 namespace NextDeveloper\Support\Tests\Database\Models;
 
-use Tests\TestCase;
 use GuzzleHttp\Client;
-use Illuminate\Http\Response;
 use Illuminate\Http\Request;
-use NextDeveloper\Support\Database\Filters\SupportTicketQueryFilter;
-use NextDeveloper\Support\Services\AbstractServices\AbstractSupportTicketService;
+use Illuminate\Http\Response;
 use Illuminate\Pagination\LengthAwarePaginator;
 use League\Fractal\Resource\Collection;
+use NextDeveloper\Support\Database\Filters\SupportTicketQueryFilter;
+use NextDeveloper\Support\Services\AbstractServices\AbstractSupportTicketService;
+use Tests\TestCase;
 
 trait SupportTicketTestTraits
 {
@@ -63,6 +63,7 @@ trait SupportTicketTestTraits
                 'object_type'  =>  'a',
                 'level'  =>  '1',
                 'priority'  =>  '1',
+                'time_spent'  =>  '1',
                     'response_time'  =>  now(),
                             ],
                 ['http_errors' => false]
@@ -441,6 +442,25 @@ trait SupportTicketTestTraits
         $this->assertTrue(true);
     }
 
+    public function test_supportticket_event_time_spent_filter()
+    {
+        try {
+            $request = new Request(
+                [
+                'time_spent'  =>  '1'
+                ]
+            );
+
+            $filter = new SupportTicketQueryFilter($request);
+
+            $model = \NextDeveloper\Support\Database\Models\SupportTicket::filter($filter)->first();
+        } catch (\Exception $e) {
+            $this->assertFalse(false, $e->getMessage());
+        }
+
+        $this->assertTrue(true);
+    }
+
     public function test_supportticket_event_response_time_filter_start()
     {
         try {
@@ -673,4 +693,5 @@ trait SupportTicketTestTraits
         $this->assertTrue(true);
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 }

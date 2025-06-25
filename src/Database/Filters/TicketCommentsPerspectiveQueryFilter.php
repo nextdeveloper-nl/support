@@ -4,7 +4,7 @@ namespace NextDeveloper\Support\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
-
+                
 
 /**
  * This class automatically puts where clause on database so that use can filter
@@ -17,48 +17,48 @@ class TicketCommentsPerspectiveQueryFilter extends AbstractQueryFilter
      * @var Builder
      */
     protected $builder;
-
+    
     public function comment($value)
     {
-        return $this->builder->where('comment', 'like', '%' . $value . '%');
+        return $this->builder->where('comment', 'ilike', '%' . $value . '%');
     }
 
-
+        
     public function fullname($value)
     {
-        return $this->builder->where('fullname', 'like', '%' . $value . '%');
+        return $this->builder->where('fullname', 'ilike', '%' . $value . '%');
     }
 
-
+        
     public function email($value)
     {
-        return $this->builder->where('email', 'like', '%' . $value . '%');
+        return $this->builder->where('email', 'ilike', '%' . $value . '%');
     }
 
-
+        
     public function phoneNumber($value)
     {
-        return $this->builder->where('phone_number', 'like', '%' . $value . '%');
+        return $this->builder->where('phone_number', 'ilike', '%' . $value . '%');
     }
 
-    //  This is an alias function of phoneNumber
+        //  This is an alias function of phoneNumber
     public function phone_number($value)
     {
         return $this->phoneNumber($value);
     }
-
+        
     public function pronoun($value)
     {
-        return $this->builder->where('pronoun', 'like', '%' . $value . '%');
+        return $this->builder->where('pronoun', 'ilike', '%' . $value . '%');
     }
 
-
+        
     public function name($value)
     {
-        return $this->builder->where('name', 'like', '%' . $value . '%');
+        return $this->builder->where('name', 'ilike', '%' . $value . '%');
     }
 
-
+    
     public function createdAtStart($date)
     {
         return $this->builder->where('created_at', '>=', $date);
@@ -127,53 +127,54 @@ class TicketCommentsPerspectiveQueryFilter extends AbstractQueryFilter
 
     public function iamAccountId($value)
     {
-        $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('uuid', $value)->first();
+            $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('uuid', $value)->first();
 
-        if ($iamAccount) {
+        if($iamAccount) {
             return $this->builder->where('iam_account_id', '=', $iamAccount->id);
         }
     }
 
-
+    
     public function iamUserId($value)
     {
-        $iamUser = \NextDeveloper\IAM\Database\Models\Users::where('uuid', $value)->first();
+            $iamUser = \NextDeveloper\IAM\Database\Models\Users::where('uuid', $value)->first();
 
-        if ($iamUser) {
+        if($iamUser) {
             return $this->builder->where('iam_user_id', '=', $iamUser->id);
         }
     }
 
-
+    
     public function iamAccountTypeId($value)
     {
-        $iamAccountType = \NextDeveloper\IAM\Database\Models\AccountTypes::where('uuid', $value)->first();
+            $iamAccountType = \NextDeveloper\IAM\Database\Models\AccountTypes::where('uuid', $value)->first();
 
-        if ($iamAccountType) {
+        if($iamAccountType) {
             return $this->builder->where('iam_account_type_id', '=', $iamAccountType->id);
         }
     }
 
-    //  This is an alias function of iamAccountType
+        //  This is an alias function of iamAccountType
     public function iam_account_type_id($value)
     {
         return $this->iamAccountType($value);
     }
-
+    
     public function supportTicketId($value)
     {
-        $supportTicket = \NextDeveloper\Support\Database\Models\Tickets::where('uuid', $value)->first();
+            $supportTicket = \NextDeveloper\Support\Database\Models\Tickets::where('uuid', $value)->first();
 
-        if ($supportTicket) {
+        if($supportTicket) {
             return $this->builder->where('support_ticket_id', '=', $supportTicket->id);
         }
     }
 
-    //  This is an alias function of supportTicket
+        //  This is an alias function of supportTicket
     public function support_ticket_id($value)
     {
         return $this->supportTicket($value);
     }
-
+    
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 }

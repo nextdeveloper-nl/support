@@ -5,11 +5,9 @@ namespace NextDeveloper\Support\Authorization\Roles;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use NextDeveloper\CRM\Database\Models\AccountManagers;
 use NextDeveloper\IAM\Authorization\Roles\AbstractRole;
 use NextDeveloper\IAM\Authorization\Roles\IAuthorizationRole;
 use NextDeveloper\IAM\Database\Models\Users;
-use NextDeveloper\IAM\Helpers\UserHelper;
 
 class SupportSpecialistRole extends AbstractRole implements IAuthorizationRole
 {
@@ -30,9 +28,7 @@ class SupportSpecialistRole extends AbstractRole implements IAuthorizationRole
      */
     public function apply(Builder $builder, Model $model)
     {
-        $builder->where([
-            'iam_account_id'    =>  UserHelper::currentAccount()->id
-        ]);
+
     }
 
     public function checkPrivileges(Users $users = null)

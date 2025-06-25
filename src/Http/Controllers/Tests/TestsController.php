@@ -3,14 +3,16 @@
 namespace NextDeveloper\Support\Http\Controllers\Tests;
 
 use Illuminate\Http\Request;
-use NextDeveloper\Support\Http\Controllers\AbstractController;
 use NextDeveloper\Commons\Http\Response\ResponsableFactory;
-use NextDeveloper\Support\Http\Requests\Tests\TestsUpdateRequest;
+use NextDeveloper\Commons\Http\Traits\Addresses;
+use NextDeveloper\Commons\Http\Traits\Tags;
 use NextDeveloper\Support\Database\Filters\TestsQueryFilter;
 use NextDeveloper\Support\Database\Models\Tests;
-use NextDeveloper\Support\Services\TestsService;
+use NextDeveloper\Support\Http\Controllers\AbstractController;
 use NextDeveloper\Support\Http\Requests\Tests\TestsCreateRequest;
-use NextDeveloper\Commons\Http\Traits\Tags;use NextDeveloper\Commons\Http\Traits\Addresses;
+use NextDeveloper\Support\Http\Requests\Tests\TestsUpdateRequest;
+use NextDeveloper\Support\Services\TestsService;
+
 class TestsController extends AbstractController
 {
     private $model = Tests::class;

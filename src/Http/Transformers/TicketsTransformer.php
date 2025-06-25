@@ -9,7 +9,6 @@ use NextDeveloper\IAM\Database\Models\Users;
 use NextDeveloper\IAM\Http\Transformers\PublicUsersTransformer;
 use NextDeveloper\Support\Database\Models\TicketComments;
 use NextDeveloper\Support\Database\Models\Tickets;
-use NextDeveloper\Commons\Http\Transformers\AbstractTransformer;
 use NextDeveloper\Support\Http\Transformers\AbstractTransformers\AbstractTicketsTransformer;
 
 /**

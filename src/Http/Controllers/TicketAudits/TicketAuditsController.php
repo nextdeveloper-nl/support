@@ -3,14 +3,16 @@
 namespace NextDeveloper\Support\Http\Controllers\TicketAudits;
 
 use Illuminate\Http\Request;
-use NextDeveloper\Support\Http\Controllers\AbstractController;
 use NextDeveloper\Commons\Http\Response\ResponsableFactory;
-use NextDeveloper\Support\Http\Requests\TicketAudits\TicketAuditsUpdateRequest;
+use NextDeveloper\Commons\Http\Traits\Addresses;
+use NextDeveloper\Commons\Http\Traits\Tags;
 use NextDeveloper\Support\Database\Filters\TicketAuditsQueryFilter;
 use NextDeveloper\Support\Database\Models\TicketAudits;
-use NextDeveloper\Support\Services\TicketAuditsService;
+use NextDeveloper\Support\Http\Controllers\AbstractController;
 use NextDeveloper\Support\Http\Requests\TicketAudits\TicketAuditsCreateRequest;
-use NextDeveloper\Commons\Http\Traits\Tags;use NextDeveloper\Commons\Http\Traits\Addresses;
+use NextDeveloper\Support\Http\Requests\TicketAudits\TicketAuditsUpdateRequest;
+use NextDeveloper\Support\Services\TicketAuditsService;
+
 class TicketAuditsController extends AbstractController
 {
     private $model = TicketAudits::class;

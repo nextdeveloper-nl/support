@@ -2,8 +2,8 @@
 
 namespace NextDeveloper\Support\Http\Transformers\AbstractTransformers;
 
-use NextDeveloper\Support\Database\Models\Comments;
 use NextDeveloper\Commons\Http\Transformers\AbstractTransformer;
+use NextDeveloper\Support\Database\Models\Comments;
 
 /**
  * Class CommentsTransformer. This class is being used to manipulate the data we are serving to the customer
@@ -23,7 +23,7 @@ class AbstractCommentsTransformer extends AbstractTransformer
                         $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
                     $iamUserId = \NextDeveloper\IAM\Database\Models\Users::where('id', $model->iam_user_id)->first();
                     $supportTicketId = \NextDeveloper\Support\Database\Models\Tickets::where('id', $model->support_ticket_id)->first();
-        
+
         return $this->buildPayload(
             [
             'id'  =>  $model->uuid,

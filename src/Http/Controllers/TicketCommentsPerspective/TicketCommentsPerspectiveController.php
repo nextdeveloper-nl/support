@@ -3,14 +3,16 @@
 namespace NextDeveloper\Support\Http\Controllers\TicketCommentsPerspective;
 
 use Illuminate\Http\Request;
-use NextDeveloper\Support\Http\Controllers\AbstractController;
 use NextDeveloper\Commons\Http\Response\ResponsableFactory;
-use NextDeveloper\Support\Http\Requests\TicketCommentsPerspective\TicketCommentsPerspectiveUpdateRequest;
+use NextDeveloper\Commons\Http\Traits\Addresses as AddressesTrait;
+use NextDeveloper\Commons\Http\Traits\Tags as TagsTrait;
 use NextDeveloper\Support\Database\Filters\TicketCommentsPerspectiveQueryFilter;
 use NextDeveloper\Support\Database\Models\TicketCommentsPerspective;
-use NextDeveloper\Support\Services\TicketCommentsPerspectiveService;
+use NextDeveloper\Support\Http\Controllers\AbstractController;
 use NextDeveloper\Support\Http\Requests\TicketCommentsPerspective\TicketCommentsPerspectiveCreateRequest;
-use NextDeveloper\Commons\Http\Traits\Tags as TagsTrait;use NextDeveloper\Commons\Http\Traits\Addresses as AddressesTrait;
+use NextDeveloper\Support\Http\Requests\TicketCommentsPerspective\TicketCommentsPerspectiveUpdateRequest;
+use NextDeveloper\Support\Services\TicketCommentsPerspectiveService;
+
 class TicketCommentsPerspectiveController extends AbstractController
 {
     private $model = TicketCommentsPerspective::class;

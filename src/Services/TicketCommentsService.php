@@ -2,6 +2,7 @@
 
 namespace NextDeveloper\Support\Services;
 
+use Illuminate\Support\Str;
 use NextDeveloper\Support\Services\AbstractServices\AbstractTicketCommentsService;
 
 /**
@@ -15,4 +16,9 @@ class TicketCommentsService extends AbstractTicketCommentsService
 {
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+    public static function create(array $data)
+    {
+        //
+    }
 }

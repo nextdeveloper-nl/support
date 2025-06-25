@@ -8,7 +8,6 @@ use NextDeveloper\Commons\Common\Cache\CacheHelper;
 use NextDeveloper\IAM\Database\Models\Users;
 use NextDeveloper\IAM\Http\Transformers\PublicUsersTransformer;
 use NextDeveloper\Support\Database\Models\TicketComments;
-use NextDeveloper\Commons\Http\Transformers\AbstractTransformer;
 use NextDeveloper\Support\Http\Transformers\AbstractTransformers\AbstractTicketCommentsTransformer;
 
 /**

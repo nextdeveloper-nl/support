@@ -23,24 +23,24 @@ Route::prefix('support')->group(
             }
         );
 
-        Route::prefix('ticket-audits')->group(
+        Route::prefix('ticket-comments')->group(
             function () {
-                Route::get('/', 'TicketAudits\TicketAuditsController@index');
-                Route::get('/actions', 'TicketAudits\TicketAuditsController@getActions');
+                Route::get('/', 'TicketComments\TicketCommentsController@index');
+                Route::get('/actions', 'TicketComments\TicketCommentsController@getActions');
 
-                Route::get('{support_ticket_audits}/tags ', 'TicketAudits\TicketAuditsController@tags');
-                Route::post('{support_ticket_audits}/tags ', 'TicketAudits\TicketAuditsController@saveTags');
-                Route::get('{support_ticket_audits}/addresses ', 'TicketAudits\TicketAuditsController@addresses');
-                Route::post('{support_ticket_audits}/addresses ', 'TicketAudits\TicketAuditsController@saveAddresses');
+                Route::get('{support_ticket_comments}/tags ', 'TicketComments\TicketCommentsController@tags');
+                Route::post('{support_ticket_comments}/tags ', 'TicketComments\TicketCommentsController@saveTags');
+                Route::get('{support_ticket_comments}/addresses ', 'TicketComments\TicketCommentsController@addresses');
+                Route::post('{support_ticket_comments}/addresses ', 'TicketComments\TicketCommentsController@saveAddresses');
 
-                Route::get('/{support_ticket_audits}/{subObjects}', 'TicketAudits\TicketAuditsController@relatedObjects');
-                Route::get('/{support_ticket_audits}', 'TicketAudits\TicketAuditsController@show');
+                Route::get('/{support_ticket_comments}/{subObjects}', 'TicketComments\TicketCommentsController@relatedObjects');
+                Route::get('/{support_ticket_comments}', 'TicketComments\TicketCommentsController@show');
 
-                Route::post('/', 'TicketAudits\TicketAuditsController@store');
-                Route::post('/{support_ticket_audits}/do/{action}', 'TicketAudits\TicketAuditsController@doAction');
+                Route::post('/', 'TicketComments\TicketCommentsController@store');
+                Route::post('/{support_ticket_comments}/do/{action}', 'TicketComments\TicketCommentsController@doAction');
 
-                Route::patch('/{support_ticket_audits}', 'TicketAudits\TicketAuditsController@update');
-                Route::delete('/{support_ticket_audits}', 'TicketAudits\TicketAuditsController@destroy');
+                Route::patch('/{support_ticket_comments}', 'TicketComments\TicketCommentsController@update');
+                Route::delete('/{support_ticket_comments}', 'TicketComments\TicketCommentsController@destroy');
             }
         );
 
@@ -65,24 +65,24 @@ Route::prefix('support')->group(
             }
         );
 
-        Route::prefix('ticket-comments')->group(
+        Route::prefix('ticket-audits')->group(
             function () {
-                Route::get('/', 'TicketComments\TicketCommentsController@index');
-                Route::get('/actions', 'TicketComments\TicketCommentsController@getActions');
+                Route::get('/', 'TicketAudits\TicketAuditsController@index');
+                Route::get('/actions', 'TicketAudits\TicketAuditsController@getActions');
 
-                Route::get('{support_ticket_comments}/tags ', 'TicketComments\TicketCommentsController@tags');
-                Route::post('{support_ticket_comments}/tags ', 'TicketComments\TicketCommentsController@saveTags');
-                Route::get('{support_ticket_comments}/addresses ', 'TicketComments\TicketCommentsController@addresses');
-                Route::post('{support_ticket_comments}/addresses ', 'TicketComments\TicketCommentsController@saveAddresses');
+                Route::get('{support_ticket_audits}/tags ', 'TicketAudits\TicketAuditsController@tags');
+                Route::post('{support_ticket_audits}/tags ', 'TicketAudits\TicketAuditsController@saveTags');
+                Route::get('{support_ticket_audits}/addresses ', 'TicketAudits\TicketAuditsController@addresses');
+                Route::post('{support_ticket_audits}/addresses ', 'TicketAudits\TicketAuditsController@saveAddresses');
 
-                Route::get('/{support_ticket_comments}/{subObjects}', 'TicketComments\TicketCommentsController@relatedObjects');
-                Route::get('/{support_ticket_comments}', 'TicketComments\TicketCommentsController@show');
+                Route::get('/{support_ticket_audits}/{subObjects}', 'TicketAudits\TicketAuditsController@relatedObjects');
+                Route::get('/{support_ticket_audits}', 'TicketAudits\TicketAuditsController@show');
 
-                Route::post('/', 'TicketComments\TicketCommentsController@store');
-                Route::post('/{support_ticket_comments}/do/{action}', 'TicketComments\TicketCommentsController@doAction');
+                Route::post('/', 'TicketAudits\TicketAuditsController@store');
+                Route::post('/{support_ticket_audits}/do/{action}', 'TicketAudits\TicketAuditsController@doAction');
 
-                Route::patch('/{support_ticket_comments}', 'TicketComments\TicketCommentsController@update');
-                Route::delete('/{support_ticket_comments}', 'TicketComments\TicketCommentsController@destroy');
+                Route::patch('/{support_ticket_audits}', 'TicketAudits\TicketAuditsController@update');
+                Route::delete('/{support_ticket_audits}', 'TicketAudits\TicketAuditsController@destroy');
             }
         );
 
@@ -113,6 +113,12 @@ Route::prefix('support')->group(
 
 
 
+
+
+
+
+
     }
 );
+
 
