@@ -32,6 +32,8 @@ class SupportUserRole extends AbstractRole implements IAuthorizationRole
         $builder->where([
             'iam_account_id'    =>  UserHelper::currentAccount()->id,
             'iam_user_id'       =>  UserHelper::me()->id
+        ])->orWhere([
+            'support_seeker_account_id' =>  UserHelper::currentAccount()->id
         ]);
     }
 
