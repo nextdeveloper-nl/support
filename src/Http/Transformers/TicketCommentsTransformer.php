@@ -3,7 +3,10 @@
 namespace NextDeveloper\Support\Http\Transformers;
 
 use Illuminate\Support\Facades\Cache;
+use League\Fractal\Resource\Item;
 use NextDeveloper\Commons\Common\Cache\CacheHelper;
+use NextDeveloper\IAM\Database\Models\Users;
+use NextDeveloper\IAM\Http\Transformers\PublicUsersTransformer;
 use NextDeveloper\Support\Database\Models\TicketComments;
 use NextDeveloper\Support\Http\Transformers\AbstractTransformers\AbstractTicketCommentsTransformer;
 
@@ -14,6 +17,22 @@ use NextDeveloper\Support\Http\Transformers\AbstractTransformers\AbstractTicketC
  */
 class TicketCommentsTransformer extends AbstractTicketCommentsTransformer
 {
+
+    /**
+     * @var array
+     */
+    protected array $availableIncludes = [
+        'states',
+        'actions',
+        'media',
+        'comments',
+        'votes',
+        'socialMedia',
+        'phoneNumbers',
+        'addresses',
+        'meta',
+        'user'
+    ];
 
     /**
      * @param TicketComments $model
@@ -39,4 +58,21 @@ class TicketCommentsTransformer extends AbstractTicketCommentsTransformer
 
         return $transformed;
     }
+
+    /**
+     * @param TicketComments $model
+     *
+     * @return Item|null
+     */
+    public function includeUser(TicketComments $model)
+    {
+        $user = Users::where('id', $model->iam_user_id)->first();
+
+        if ($user) {
+            return $this->item($user, new PublicUsersTransformer());
+        }
+
+        return null;
+    }
+
 }

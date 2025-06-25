@@ -103,10 +103,10 @@ class Tickets extends Model
     'response_time' => 'datetime',
     'object_id' => 'integer',
     'object_type' => 'string',
+    'is_public' => 'boolean',
     'created_at' => 'datetime',
     'updated_at' => 'datetime',
     'deleted_at' => 'datetime',
-    'is_public' => 'boolean',
     'responsible_user_id' => 'integer',
     'time_spent' => 'integer',
     'watcher_user_ids' => 'array:integer',
@@ -176,12 +176,12 @@ class Tickets extends Model
     {
         return $this->belongsTo(\NextDeveloper\IAM\Database\Models\Accounts::class);
     }
-    
+
     public function users() : \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(\NextDeveloper\IAM\Database\Models\Users::class);
     }
-    
+
     public function tests() : \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(\NextDeveloper\Support\Database\Models\Tests::class);
