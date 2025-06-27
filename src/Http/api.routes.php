@@ -107,7 +107,44 @@ Route::prefix('support')->group(
             }
         );
 
+        Route::prefix('tickets-perspective')->group(
+            function () {
+                Route::get('/', 'TicketsPerspective\TicketsPerspectiveController@index');
+                Route::get('/actions', 'TicketsPerspective\TicketsPerspectiveController@getActions');
+
+                Route::get('{support_tickets_perspective}/tags ', 'TicketsPerspective\TicketsPerspectiveController@tags');
+                Route::post('{support_tickets_perspective}/tags ', 'TicketsPerspective\TicketsPerspectiveController@saveTags');
+                Route::get('{support_tickets_perspective}/addresses ', 'TicketsPerspective\TicketsPerspectiveController@addresses');
+                Route::post('{support_tickets_perspective}/addresses ', 'TicketsPerspective\TicketsPerspectiveController@saveAddresses');
+
+                Route::get('/{support_tickets_perspective}/{subObjects}', 'TicketsPerspective\TicketsPerspectiveController@relatedObjects');
+                Route::get('/{support_tickets_perspective}', 'TicketsPerspective\TicketsPerspectiveController@show');
+
+                Route::post('/', 'TicketsPerspective\TicketsPerspectiveController@store');
+                Route::post('/{support_tickets_perspective}/do/{action}', 'TicketsPerspective\TicketsPerspectiveController@doAction');
+
+                Route::patch('/{support_tickets_perspective}', 'TicketsPerspective\TicketsPerspectiveController@update');
+                Route::delete('/{support_tickets_perspective}', 'TicketsPerspective\TicketsPerspectiveController@destroy');
+            }
+        );
+
         // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -120,5 +157,8 @@ Route::prefix('support')->group(
 
     }
 );
+
+
+
 
 

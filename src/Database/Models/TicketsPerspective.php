@@ -2,19 +2,19 @@
 
 namespace NextDeveloper\Support\Database\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use NextDeveloper\Commons\Common\Cache\Traits\CleanCache;
-use NextDeveloper\Commons\Database\Traits\Filterable;
 use NextDeveloper\Commons\Database\Traits\HasStates;
-use NextDeveloper\Commons\Database\Traits\Taggable;
-use NextDeveloper\Commons\Database\Traits\UuidId;
-use NextDeveloper\Support\Database\Observers\TicketsObserver;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Model;
+use NextDeveloper\Commons\Database\Traits\Filterable;
+use NextDeveloper\Support\Database\Observers\TicketsPerspectiveObserver;
+use NextDeveloper\Commons\Database\Traits\UuidId;
+use NextDeveloper\Commons\Common\Cache\Traits\CleanCache;
+use NextDeveloper\Commons\Database\Traits\Taggable;
 use NextDeveloper\Commons\Database\Traits\RunAsAdministrator;
 
 /**
- * Tickets model.
+ * TicketsPerspective model.
  *
  * @package  NextDeveloper\Support\Database\Models
  * @property integer $id
@@ -23,31 +23,34 @@ use NextDeveloper\Commons\Database\Traits\RunAsAdministrator;
  * @property string $description
  * @property integer $iam_account_id
  * @property integer $iam_user_id
- * @property array $tags
- * @property boolean $is_closed
- * @property integer $level
+ * @property string $fullname
+ * @property string $email
+ * @property string $phone_number
+ * @property string $pronoun
  * @property integer $priority
- * @property \Carbon\Carbon $response_time
- * @property integer $object_id
- * @property string $object_type
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property \Carbon\Carbon $deleted_at
+ * @property integer $level
+ * @property boolean $is_closed
  * @property boolean $is_public
- * @property integer $responsible_user_id
- * @property integer $time_spent
+ * @property \Carbon\Carbon $response_time
  * @property array $watcher_user_ids
  * @property array $watcher_account_ids
  * @property integer $support_seeker_account_id
+ * @property string $name
+ * @property integer $iam_account_type_id
+ * @property array $tags
+ * @property string $support_seeker_name
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property \Carbon\Carbon $deleted_at
  */
-class Tickets extends Model
+class TicketsPerspective extends Model
 {
     use Filterable, UuidId, CleanCache, Taggable, HasStates, RunAsAdministrator;
     use SoftDeletes;
 
     public $timestamps = true;
 
-    protected $table = 'support_tickets';
+    protected $table = 'support_tickets_perspective';
 
 
     /**
@@ -60,19 +63,22 @@ class Tickets extends Model
             'description',
             'iam_account_id',
             'iam_user_id',
-            'tags',
-            'is_closed',
-            'level',
+            'fullname',
+            'email',
+            'phone_number',
+            'pronoun',
             'priority',
-            'response_time',
-            'object_id',
-            'object_type',
+            'level',
+            'is_closed',
             'is_public',
-            'responsible_user_id',
-            'time_spent',
+            'response_time',
             'watcher_user_ids',
             'watcher_account_ids',
             'support_seeker_account_id',
+            'name',
+            'iam_account_type_id',
+            'tags',
+            'support_seeker_name',
     ];
 
     /**
@@ -98,22 +104,25 @@ class Tickets extends Model
     'id' => 'integer',
     'title' => 'string',
     'description' => 'string',
-    'tags' => \NextDeveloper\Commons\Database\Casts\TextArray::class,
-    'is_closed' => 'boolean',
-    'level' => 'integer',
+    'fullname' => 'string',
+    'email' => 'string',
+    'phone_number' => 'string',
+    'pronoun' => 'string',
     'priority' => 'integer',
-    'response_time' => 'datetime',
-    'object_id' => 'integer',
-    'object_type' => 'string',
-    'created_at' => 'datetime',
-    'updated_at' => 'datetime',
-    'deleted_at' => 'datetime',
+    'level' => 'integer',
+    'is_closed' => 'boolean',
     'is_public' => 'boolean',
-    'responsible_user_id' => 'integer',
-    'time_spent' => 'integer',
+    'response_time' => 'datetime',
     'watcher_user_ids' => 'array:integer',
     'watcher_account_ids' => 'array:integer',
     'support_seeker_account_id' => 'integer',
+    'name' => 'string',
+    'iam_account_type_id' => 'integer',
+    'tags' => \NextDeveloper\Commons\Database\Casts\TextArray::class,
+    'support_seeker_name' => 'string',
+    'created_at' => 'datetime',
+    'updated_at' => 'datetime',
+    'deleted_at' => 'datetime',
     ];
 
     /**
@@ -148,7 +157,7 @@ class Tickets extends Model
         parent::boot();
 
         //  We create and add Observer even if we wont use it.
-        parent::observe(TicketsObserver::class);
+        parent::observe(TicketsPerspectiveObserver::class);
 
         self::registerScopes();
     }
@@ -156,7 +165,7 @@ class Tickets extends Model
     public static function registerScopes()
     {
         $globalScopes = config('support.scopes.global');
-        $modelScopes = config('support.scopes.support_tickets');
+        $modelScopes = config('support.scopes.support_tickets_perspective');
 
         if(!$modelScopes) { $modelScopes = [];
         }
@@ -175,23 +184,5 @@ class Tickets extends Model
         }
     }
 
-    public function accounts() : \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(\NextDeveloper\IAM\Database\Models\Accounts::class);
-    }
-    
-    public function users() : \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(\NextDeveloper\IAM\Database\Models\Users::class);
-    }
-    
-    public function tests() : \Illuminate\Database\Eloquent\Relations\HasMany
-    {
-        return $this->hasMany(\NextDeveloper\Support\Database\Models\Tests::class);
-    }
-
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
-
-
-
 }

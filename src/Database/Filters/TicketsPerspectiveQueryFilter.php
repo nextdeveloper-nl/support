@@ -10,7 +10,7 @@ use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
  * This class automatically puts where clause on database so that use can filter
  * data returned from the query.
  */
-class TicketsQueryFilter extends AbstractQueryFilter
+class TicketsPerspectiveQueryFilter extends AbstractQueryFilter
 {
     /**
      * Filter by tags
@@ -50,30 +50,51 @@ class TicketsQueryFilter extends AbstractQueryFilter
     }
 
         
-    public function objectType($value)
+    public function fullname($value)
     {
-        return $this->builder->where('object_type', 'ilike', '%' . $value . '%');
+        return $this->builder->where('fullname', 'ilike', '%' . $value . '%');
     }
 
-        //  This is an alias function of objectType
-    public function object_type($value)
+        
+    public function email($value)
     {
-        return $this->objectType($value);
-    }
-    
-    public function level($value)
-    {
-        $operator = substr($value, 0, 1);
-
-        if ($operator != '<' || $operator != '>') {
-            $operator = '=';
-        } else {
-            $value = substr($value, 1);
-        }
-
-        return $this->builder->where('level', $operator, $value);
+        return $this->builder->where('email', 'ilike', '%' . $value . '%');
     }
 
+        
+    public function phoneNumber($value)
+    {
+        return $this->builder->where('phone_number', 'ilike', '%' . $value . '%');
+    }
+
+        //  This is an alias function of phoneNumber
+    public function phone_number($value)
+    {
+        return $this->phoneNumber($value);
+    }
+        
+    public function pronoun($value)
+    {
+        return $this->builder->where('pronoun', 'ilike', '%' . $value . '%');
+    }
+
+        
+    public function name($value)
+    {
+        return $this->builder->where('name', 'ilike', '%' . $value . '%');
+    }
+
+        
+    public function supportSeekerName($value)
+    {
+        return $this->builder->where('support_seeker_name', 'ilike', '%' . $value . '%');
+    }
+
+        //  This is an alias function of supportSeekerName
+    public function support_seeker_name($value)
+    {
+        return $this->supportSeekerName($value);
+    }
     
     public function priority($value)
     {
@@ -89,7 +110,7 @@ class TicketsQueryFilter extends AbstractQueryFilter
     }
 
     
-    public function timeSpent($value)
+    public function level($value)
     {
         $operator = substr($value, 0, 1);
 
@@ -99,14 +120,9 @@ class TicketsQueryFilter extends AbstractQueryFilter
             $value = substr($value, 1);
         }
 
-        return $this->builder->where('time_spent', $operator, $value);
+        return $this->builder->where('level', $operator, $value);
     }
 
-        //  This is an alias function of timeSpent
-    public function time_spent($value)
-    {
-        return $this->timeSpent($value);
-    }
     
     public function isClosed($value)
     {
@@ -238,24 +254,9 @@ class TicketsQueryFilter extends AbstractQueryFilter
     }
 
     
-    public function responsibleUserId($value)
-    {
-            $responsibleUser = \NextDeveloper\IAM\Database\Models\Users::where('uuid', $value)->first();
-
-        if($responsibleUser) {
-            return $this->builder->where('responsible_user_id', '=', $responsibleUser->id);
-        }
-    }
-
-        //  This is an alias function of responsibleUser
-    public function responsible_user_id($value)
-    {
-        return $this->responsibleUser($value);
-    }
-    
     public function supportSeekerAccountId($value)
     {
-            $supportSeekerAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('uuid', $value)->first();
+            $supportSeekerAccount = \NextDeveloper\Support\Database\Models\SeekerAccounts::where('uuid', $value)->first();
 
         if($supportSeekerAccount) {
             return $this->builder->where('support_seeker_account_id', '=', $supportSeekerAccount->id);
@@ -268,12 +269,20 @@ class TicketsQueryFilter extends AbstractQueryFilter
         return $this->supportSeekerAccount($value);
     }
     
+    public function iamAccountTypeId($value)
+    {
+            $iamAccountType = \NextDeveloper\IAM\Database\Models\AccountTypes::where('uuid', $value)->first();
+
+        if($iamAccountType) {
+            return $this->builder->where('iam_account_type_id', '=', $iamAccountType->id);
+        }
+    }
+
+        //  This is an alias function of iamAccountType
+    public function iam_account_type_id($value)
+    {
+        return $this->iamAccountType($value);
+    }
+    
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
-
-
-
-
-
-
-
 }
