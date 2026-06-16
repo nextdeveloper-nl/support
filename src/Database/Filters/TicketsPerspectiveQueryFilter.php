@@ -4,7 +4,7 @@ namespace NextDeveloper\Support\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
-                
+                        
 
 /**
  * This class automatically puts where clause on database so that use can filter
@@ -49,6 +49,23 @@ class TicketsPerspectiveQueryFilter extends AbstractQueryFilter
         return $this->builder->where('description', 'ilike', '%' . $value . '%');
     }
 
+        
+    public function status($value)
+    {
+        return $this->builder->where('status', 'ilike', '%' . $value . '%');
+    }
+
+        
+    public function objectType($value)
+    {
+        return $this->builder->where('object_type', 'ilike', '%' . $value . '%');
+    }
+
+        //  This is an alias function of objectType
+    public function object_type($value)
+    {
+        return $this->objectType($value);
+    }
         
     public function fullname($value)
     {
@@ -95,6 +112,42 @@ class TicketsPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->supportSeekerName($value);
     }
+        
+    public function responsibleName($value)
+    {
+        return $this->builder->where('responsible_name', 'ilike', '%' . $value . '%');
+    }
+
+        //  This is an alias function of responsibleName
+    public function responsible_name($value)
+    {
+        return $this->responsibleName($value);
+    }
+        
+    public function categoryName($value)
+    {
+        return $this->builder->where('category_name', 'ilike', '%' . $value . '%');
+    }
+
+        //  This is an alias function of categoryName
+    public function category_name($value)
+    {
+        return $this->categoryName($value);
+    }
+    
+    public function level($value)
+    {
+        $operator = substr($value, 0, 1);
+
+        if ($operator != '<' || $operator != '>') {
+            $operator = '=';
+        } else {
+            $value = substr($value, 1);
+        }
+
+        return $this->builder->where('level', $operator, $value);
+    }
+
     
     public function priority($value)
     {
@@ -110,7 +163,7 @@ class TicketsPerspectiveQueryFilter extends AbstractQueryFilter
     }
 
     
-    public function level($value)
+    public function reopenedCount($value)
     {
         $operator = substr($value, 0, 1);
 
@@ -120,9 +173,52 @@ class TicketsPerspectiveQueryFilter extends AbstractQueryFilter
             $value = substr($value, 1);
         }
 
-        return $this->builder->where('level', $operator, $value);
+        return $this->builder->where('reopened_count', $operator, $value);
     }
 
+        //  This is an alias function of reopenedCount
+    public function reopened_count($value)
+    {
+        return $this->reopenedCount($value);
+    }
+    
+    public function timeSpent($value)
+    {
+        $operator = substr($value, 0, 1);
+
+        if ($operator != '<' || $operator != '>') {
+            $operator = '=';
+        } else {
+            $value = substr($value, 1);
+        }
+
+        return $this->builder->where('time_spent', $operator, $value);
+    }
+
+        //  This is an alias function of timeSpent
+    public function time_spent($value)
+    {
+        return $this->timeSpent($value);
+    }
+    
+    public function csatScore($value)
+    {
+        $operator = substr($value, 0, 1);
+
+        if ($operator != '<' || $operator != '>') {
+            $operator = '=';
+        } else {
+            $value = substr($value, 1);
+        }
+
+        return $this->builder->where('csat_score', $operator, $value);
+    }
+
+        //  This is an alias function of csatScore
+    public function csat_score($value)
+    {
+        return $this->csatScore($value);
+    }
     
     public function isClosed($value)
     {
@@ -146,6 +242,17 @@ class TicketsPerspectiveQueryFilter extends AbstractQueryFilter
         return $this->isPublic($value);
     }
      
+    public function isFirstContactResolution($value)
+    {
+        return $this->builder->where('is_first_contact_resolution', $value);
+    }
+
+        //  This is an alias function of isFirstContactResolution
+    public function is_first_contact_resolution($value)
+    {
+        return $this->isFirstContactResolution($value);
+    }
+     
     public function responseTimeStart($date)
     {
         return $this->builder->where('response_time', '>=', $date);
@@ -166,6 +273,72 @@ class TicketsPerspectiveQueryFilter extends AbstractQueryFilter
     public function response_time_end($value)
     {
         return $this->responseTimeEnd($value);
+    }
+
+    public function firstResponseAtStart($date)
+    {
+        return $this->builder->where('first_response_at', '>=', $date);
+    }
+
+    public function firstResponseAtEnd($date)
+    {
+        return $this->builder->where('first_response_at', '<=', $date);
+    }
+
+    //  This is an alias function of firstResponseAt
+    public function first_response_at_start($value)
+    {
+        return $this->firstResponseAtStart($value);
+    }
+
+    //  This is an alias function of firstResponseAt
+    public function first_response_at_end($value)
+    {
+        return $this->firstResponseAtEnd($value);
+    }
+
+    public function resolvedAtStart($date)
+    {
+        return $this->builder->where('resolved_at', '>=', $date);
+    }
+
+    public function resolvedAtEnd($date)
+    {
+        return $this->builder->where('resolved_at', '<=', $date);
+    }
+
+    //  This is an alias function of resolvedAt
+    public function resolved_at_start($value)
+    {
+        return $this->resolvedAtStart($value);
+    }
+
+    //  This is an alias function of resolvedAt
+    public function resolved_at_end($value)
+    {
+        return $this->resolvedAtEnd($value);
+    }
+
+    public function slaResolutionDueAtStart($date)
+    {
+        return $this->builder->where('sla_resolution_due_at', '>=', $date);
+    }
+
+    public function slaResolutionDueAtEnd($date)
+    {
+        return $this->builder->where('sla_resolution_due_at', '<=', $date);
+    }
+
+    //  This is an alias function of slaResolutionDueAt
+    public function sla_resolution_due_at_start($value)
+    {
+        return $this->slaResolutionDueAtStart($value);
+    }
+
+    //  This is an alias function of slaResolutionDueAt
+    public function sla_resolution_due_at_end($value)
+    {
+        return $this->slaResolutionDueAtEnd($value);
     }
 
     public function createdAtStart($date)
@@ -254,6 +427,36 @@ class TicketsPerspectiveQueryFilter extends AbstractQueryFilter
     }
 
     
+    public function commonCategoryId($value)
+    {
+            $commonCategory = \NextDeveloper\Commons\Database\Models\Categories::where('uuid', $value)->first();
+
+        if($commonCategory) {
+            return $this->builder->where('common_category_id', '=', $commonCategory->id);
+        }
+    }
+
+        //  This is an alias function of commonCategory
+    public function common_category_id($value)
+    {
+        return $this->commonCategory($value);
+    }
+    
+    public function responsibleUserId($value)
+    {
+            $responsibleUser = \NextDeveloper\\Database\Models\ResponsibleUsers::where('uuid', $value)->first();
+
+        if($responsibleUser) {
+            return $this->builder->where('responsible_user_id', '=', $responsibleUser->id);
+        }
+    }
+
+        //  This is an alias function of responsibleUser
+    public function responsible_user_id($value)
+    {
+        return $this->responsibleUser($value);
+    }
+    
     public function supportSeekerAccountId($value)
     {
             $supportSeekerAccount = \NextDeveloper\Support\Database\Models\SeekerAccounts::where('uuid', $value)->first();
@@ -285,4 +488,5 @@ class TicketsPerspectiveQueryFilter extends AbstractQueryFilter
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 }

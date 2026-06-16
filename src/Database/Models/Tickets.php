@@ -12,6 +12,7 @@ use NextDeveloper\Commons\Database\Traits\UuidId;
 use NextDeveloper\Support\Database\Observers\TicketsObserver;
 use Illuminate\Notifications\Notifiable;
 use NextDeveloper\Commons\Database\Traits\RunAsAdministrator;
+use NextDeveloper\Commons\Database\Traits\HasObject;
 
 /**
  * Tickets model.
@@ -39,10 +40,19 @@ use NextDeveloper\Commons\Database\Traits\RunAsAdministrator;
  * @property array $watcher_user_ids
  * @property array $watcher_account_ids
  * @property integer $support_seeker_account_id
+ * @property string $status
+ * @property integer $common_category_id
+ * @property \Carbon\Carbon $first_response_at
+ * @property \Carbon\Carbon $resolved_at
+ * @property integer $reopened_count
+ * @property boolean $is_first_contact_resolution
+ * @property \Carbon\Carbon $sla_resolution_due_at
+ * @property boolean $sla_response_breached
+ * @property boolean $sla_resolution_breached
  */
 class Tickets extends Model
 {
-    use Filterable, UuidId, CleanCache, Taggable, HasStates, RunAsAdministrator;
+    use Filterable, UuidId, CleanCache, Taggable, HasStates, RunAsAdministrator, HasObject;
     use SoftDeletes;
 
     public $timestamps = true;
@@ -73,6 +83,15 @@ class Tickets extends Model
             'watcher_user_ids',
             'watcher_account_ids',
             'support_seeker_account_id',
+            'status',
+            'common_category_id',
+            'first_response_at',
+            'resolved_at',
+            'reopened_count',
+            'is_first_contact_resolution',
+            'sla_resolution_due_at',
+            'sla_response_breached',
+            'sla_resolution_breached',
     ];
 
     /**
@@ -114,6 +133,15 @@ class Tickets extends Model
     'watcher_user_ids' => 'array:integer',
     'watcher_account_ids' => 'array:integer',
     'support_seeker_account_id' => 'integer',
+    'status' => 'string',
+    'common_category_id' => 'integer',
+    'first_response_at' => 'datetime',
+    'resolved_at' => 'datetime',
+    'reopened_count' => 'integer',
+    'is_first_contact_resolution' => 'boolean',
+    'sla_resolution_due_at' => 'datetime',
+    'sla_response_breached' => 'boolean',
+    'sla_resolution_breached' => 'boolean',
     ];
 
     /**
@@ -126,6 +154,9 @@ class Tickets extends Model
     'created_at',
     'updated_at',
     'deleted_at',
+    'first_response_at',
+    'resolved_at',
+    'sla_resolution_due_at',
     ];
 
     /**
@@ -175,22 +206,18 @@ class Tickets extends Model
         }
     }
 
-    public function accounts() : \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function categories() : \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(\NextDeveloper\IAM\Database\Models\Accounts::class);
+        return $this->belongsTo(\NextDeveloper\Commons\Database\Models\Categories::class);
     }
     
-    public function users() : \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function csats() : \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->belongsTo(\NextDeveloper\IAM\Database\Models\Users::class);
-    }
-    
-    public function tests() : \Illuminate\Database\Eloquent\Relations\HasMany
-    {
-        return $this->hasMany(\NextDeveloper\Support\Database\Models\Tests::class);
+        return $this->hasMany(\NextDeveloper\Support\Database\Models\Csats::class);
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
 
 
 
