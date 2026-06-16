@@ -22,8 +22,6 @@ class SupportAdminRole extends AbstractRole implements IAuthorizationRole
     /**
      * Applies basic member role sql for Eloquent
      *
-     * @param Builder $builder
-     * @param Model $model
      * @return void
      */
     public function apply(Builder $builder, Model $model)
@@ -33,9 +31,9 @@ class SupportAdminRole extends AbstractRole implements IAuthorizationRole
          */
     }
 
-    public function checkPrivileges(Users $users = null)
+    public function checkPrivileges(?Users $users = null)
     {
-        //return UserHelper::hasRole(self::NAME, $users);
+        // return UserHelper::hasRole(self::NAME, $users);
     }
 
     public function getModule()
@@ -43,7 +41,7 @@ class SupportAdminRole extends AbstractRole implements IAuthorizationRole
         return 'support';
     }
 
-    public function allowedOperations() :array
+    public function allowedOperations(): array
     {
         return [
             'support_tickets:read',
@@ -67,6 +65,22 @@ class SupportAdminRole extends AbstractRole implements IAuthorizationRole
             'support_ticket_audits:create',
             'support_ticket_audits:update',
             'support_ticket_audits:delete',
+            'support_kb_articles:read',
+            'support_kb_articles:create',
+            'support_kb_articles:update',
+            'support_kb_articles:delete',
+            'support_sla_policies:read',
+            'support_sla_policies:create',
+            'support_sla_policies:update',
+            'support_sla_policies:delete',
+            'support_agent_expertise:read',
+            'support_agent_expertise:create',
+            'support_agent_expertise:update',
+            'support_agent_expertise:delete',
+            'support_csat:read',
+            'support_csat:create',
+            'support_csat:update',
+            'support_csat:delete',
         ];
     }
 
@@ -87,11 +101,11 @@ class SupportAdminRole extends AbstractRole implements IAuthorizationRole
 
     public function canBeApplied($column)
     {
-        if(self::DB_PREFIX === '*') {
+        if (self::DB_PREFIX === '*') {
             return true;
         }
 
-        if(Str::startsWith($column, self::DB_PREFIX)) {
+        if (Str::startsWith($column, self::DB_PREFIX)) {
             return true;
         }
 
@@ -101,10 +115,5 @@ class SupportAdminRole extends AbstractRole implements IAuthorizationRole
     public function getDbPrefix()
     {
         return self::DB_PREFIX;
-    }
-
-    public function checkRules(Users $users): bool
-    {
-        // TODO: Implement checkRules() method.
     }
 }

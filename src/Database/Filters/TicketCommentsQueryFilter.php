@@ -24,6 +24,28 @@ class TicketCommentsQueryFilter extends AbstractQueryFilter
     }
 
     
+    public function isSystemMessage($value)
+    {
+        return $this->builder->where('is_system_message', $value);
+    }
+
+        //  This is an alias function of isSystemMessage
+    public function is_system_message($value)
+    {
+        return $this->isSystemMessage($value);
+    }
+     
+    public function isInternal($value)
+    {
+        return $this->builder->where('is_internal', $value);
+    }
+
+        //  This is an alias function of isInternal
+    public function is_internal($value)
+    {
+        return $this->isInternal($value);
+    }
+     
     public function createdAtStart($date)
     {
         return $this->builder->where('created_at', '>=', $date);
@@ -126,6 +148,10 @@ class TicketCommentsQueryFilter extends AbstractQueryFilter
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
+
 
 
 

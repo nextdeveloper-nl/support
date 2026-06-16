@@ -23,23 +23,21 @@ class SupportUserRole extends AbstractRole implements IAuthorizationRole
     /**
      * Applies basic member role sql for Eloquent
      *
-     * @param Builder $builder
-     * @param Model $model
      * @return void
      */
     public function apply(Builder $builder, Model $model)
     {
         $builder->where([
-            'iam_account_id'    =>  UserHelper::currentAccount()->id,
-            'iam_user_id'       =>  UserHelper::me()->id
+            'iam_account_id' => UserHelper::currentAccount()->id,
+            'iam_user_id' => UserHelper::me()->id,
         ])->orWhere([
-            'support_seeker_account_id' =>  UserHelper::currentAccount()->id
+            'support_seeker_account_id' => UserHelper::currentAccount()->id,
         ]);
     }
 
-    public function checkPrivileges(Users $users = null)
+    public function checkPrivileges(?Users $users = null)
     {
-        //return UserHelper::hasRole(self::NAME, $users);
+        // return UserHelper::hasRole(self::NAME, $users);
     }
 
     public function getModule()
@@ -47,7 +45,7 @@ class SupportUserRole extends AbstractRole implements IAuthorizationRole
         return 'support';
     }
 
-    public function allowedOperations() :array
+    public function allowedOperations(): array
     {
         return [
             'support_tickets:read',
@@ -59,7 +57,10 @@ class SupportUserRole extends AbstractRole implements IAuthorizationRole
             'support_ticket_comments:update',
             'support_ticket_comments:delete',
             'support_tests:read',
-            'support_tests:create'
+            'support_tests:create',
+            'support_kb_articles:read',
+            'support_csat:read',
+            'support_csat:create',
         ];
     }
 
@@ -80,11 +81,11 @@ class SupportUserRole extends AbstractRole implements IAuthorizationRole
 
     public function canBeApplied($column)
     {
-        if(self::DB_PREFIX === '*') {
+        if (self::DB_PREFIX === '*') {
             return true;
         }
 
-        if(Str::startsWith($column, self::DB_PREFIX)) {
+        if (Str::startsWith($column, self::DB_PREFIX)) {
             return true;
         }
 

@@ -57,6 +57,8 @@ class AbstractTicketsTransformer extends AbstractTransformer
                                                 $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
                                                             $iamUserId = \NextDeveloper\IAM\Database\Models\Users::where('id', $model->iam_user_id)->first();
                                                             $responsibleUserId = \NextDeveloper\IAM\Database\Models\Users::where('id', $model->responsible_user_id)->first();
+                                                            $supportSeekerAccountId = \NextDeveloper\Support\Database\Models\SeekerAccounts::where('id', $model->support_seeker_account_id)->first();
+                                                            $commonCategoryId = \NextDeveloper\Commons\Database\Models\Categories::where('id', $model->common_category_id)->first();
                         
         return $this->buildPayload(
             [
@@ -80,6 +82,16 @@ class AbstractTicketsTransformer extends AbstractTransformer
             'time_spent'  =>  $model->time_spent,
             'watcher_user_ids'  =>  $model->watcher_user_ids,
             'watcher_account_ids'  =>  $model->watcher_account_ids,
+            'support_seeker_account_id'  =>  $supportSeekerAccountId ? $supportSeekerAccountId->uuid : null,
+            'status'  =>  $model->status,
+            'common_category_id'  =>  $commonCategoryId ? $commonCategoryId->uuid : null,
+            'first_response_at'  =>  $model->first_response_at,
+            'resolved_at'  =>  $model->resolved_at,
+            'reopened_count'  =>  $model->reopened_count,
+            'is_first_contact_resolution'  =>  $model->is_first_contact_resolution,
+            'sla_resolution_due_at'  =>  $model->sla_resolution_due_at,
+            'sla_response_breached'  =>  $model->sla_response_breached,
+            'sla_resolution_breached'  =>  $model->sla_resolution_breached,
             ]
         );
     }
@@ -168,8 +180,6 @@ class AbstractTicketsTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
-
-
 
 
 

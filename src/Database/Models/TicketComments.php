@@ -12,6 +12,7 @@ use NextDeveloper\Commons\Database\Traits\UuidId;
 use NextDeveloper\Support\Database\Observers\TicketCommentsObserver;
 use Illuminate\Notifications\Notifiable;
 use NextDeveloper\Commons\Database\Traits\RunAsAdministrator;
+use NextDeveloper\Commons\Database\Traits\HasObject;
 
 /**
  * TicketComments model.
@@ -26,10 +27,12 @@ use NextDeveloper\Commons\Database\Traits\RunAsAdministrator;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon $deleted_at
+ * @property boolean $is_system_message
+ * @property boolean $is_internal
  */
 class TicketComments extends Model
 {
-    use Filterable, UuidId, CleanCache, Taggable, HasStates, RunAsAdministrator;
+    use Filterable, UuidId, CleanCache, Taggable, HasStates, RunAsAdministrator, HasObject;
     use SoftDeletes;
 
     public $timestamps = true;
@@ -47,6 +50,8 @@ class TicketComments extends Model
             'iam_account_id',
             'iam_user_id',
             'support_ticket_id',
+            'is_system_message',
+            'is_internal',
     ];
 
     /**
@@ -75,6 +80,8 @@ class TicketComments extends Model
     'created_at' => 'datetime',
     'updated_at' => 'datetime',
     'deleted_at' => 'datetime',
+    'is_system_message' => 'boolean',
+    'is_internal' => 'boolean',
     ];
 
     /**
@@ -135,17 +142,11 @@ class TicketComments extends Model
         }
     }
 
-    public function accounts() : \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(\NextDeveloper\IAM\Database\Models\Accounts::class);
-    }
-    
-    public function users() : \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(\NextDeveloper\IAM\Database\Models\Users::class);
-    }
-    
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+
+
+
 
 
 
