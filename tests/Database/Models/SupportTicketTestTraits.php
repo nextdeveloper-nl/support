@@ -61,11 +61,16 @@ trait SupportTicketTestTraits
                 'title'  =>  'a',
                 'description'  =>  'a',
                 'object_type'  =>  'a',
+                'status'  =>  'a',
                 'level'  =>  '1',
                 'priority'  =>  '1',
                 'time_spent'  =>  '1',
+                'reopened_count'  =>  '1',
                     'response_time'  =>  now(),
-                            ],
+                                'first_response_at'  =>  now(),
+                    'resolved_at'  =>  now(),
+                    'sla_resolution_due_at'  =>  now(),
+                ],
                 ['http_errors' => false]
             ]
         );
@@ -404,6 +409,25 @@ trait SupportTicketTestTraits
         $this->assertTrue(true);
     }
 
+    public function test_supportticket_event_status_filter()
+    {
+        try {
+            $request = new Request(
+                [
+                'status'  =>  'a'
+                ]
+            );
+
+            $filter = new SupportTicketQueryFilter($request);
+
+            $model = \NextDeveloper\Support\Database\Models\SupportTicket::filter($filter)->first();
+        } catch (\Exception $e) {
+            $this->assertFalse(false, $e->getMessage());
+        }
+
+        $this->assertTrue(true);
+    }
+
     public function test_supportticket_event_level_filter()
     {
         try {
@@ -448,6 +472,25 @@ trait SupportTicketTestTraits
             $request = new Request(
                 [
                 'time_spent'  =>  '1'
+                ]
+            );
+
+            $filter = new SupportTicketQueryFilter($request);
+
+            $model = \NextDeveloper\Support\Database\Models\SupportTicket::filter($filter)->first();
+        } catch (\Exception $e) {
+            $this->assertFalse(false, $e->getMessage());
+        }
+
+        $this->assertTrue(true);
+    }
+
+    public function test_supportticket_event_reopened_count_filter()
+    {
+        try {
+            $request = new Request(
+                [
+                'reopened_count'  =>  '1'
                 ]
             );
 
@@ -537,6 +580,63 @@ trait SupportTicketTestTraits
         $this->assertTrue(true);
     }
 
+    public function test_supportticket_event_first_response_at_filter_start()
+    {
+        try {
+            $request = new Request(
+                [
+                'first_response_atStart'  =>  now()
+                ]
+            );
+
+            $filter = new SupportTicketQueryFilter($request);
+
+            $model = \NextDeveloper\Support\Database\Models\SupportTicket::filter($filter)->first();
+        } catch (\Exception $e) {
+            $this->assertFalse(false, $e->getMessage());
+        }
+
+        $this->assertTrue(true);
+    }
+
+    public function test_supportticket_event_resolved_at_filter_start()
+    {
+        try {
+            $request = new Request(
+                [
+                'resolved_atStart'  =>  now()
+                ]
+            );
+
+            $filter = new SupportTicketQueryFilter($request);
+
+            $model = \NextDeveloper\Support\Database\Models\SupportTicket::filter($filter)->first();
+        } catch (\Exception $e) {
+            $this->assertFalse(false, $e->getMessage());
+        }
+
+        $this->assertTrue(true);
+    }
+
+    public function test_supportticket_event_sla_resolution_due_at_filter_start()
+    {
+        try {
+            $request = new Request(
+                [
+                'sla_resolution_due_atStart'  =>  now()
+                ]
+            );
+
+            $filter = new SupportTicketQueryFilter($request);
+
+            $model = \NextDeveloper\Support\Database\Models\SupportTicket::filter($filter)->first();
+        } catch (\Exception $e) {
+            $this->assertFalse(false, $e->getMessage());
+        }
+
+        $this->assertTrue(true);
+    }
+
     public function test_supportticket_event_response_time_filter_end()
     {
         try {
@@ -600,6 +700,63 @@ trait SupportTicketTestTraits
             $request = new Request(
                 [
                 'deleted_atEnd'  =>  now()
+                ]
+            );
+
+            $filter = new SupportTicketQueryFilter($request);
+
+            $model = \NextDeveloper\Support\Database\Models\SupportTicket::filter($filter)->first();
+        } catch (\Exception $e) {
+            $this->assertFalse(false, $e->getMessage());
+        }
+
+        $this->assertTrue(true);
+    }
+
+    public function test_supportticket_event_first_response_at_filter_end()
+    {
+        try {
+            $request = new Request(
+                [
+                'first_response_atEnd'  =>  now()
+                ]
+            );
+
+            $filter = new SupportTicketQueryFilter($request);
+
+            $model = \NextDeveloper\Support\Database\Models\SupportTicket::filter($filter)->first();
+        } catch (\Exception $e) {
+            $this->assertFalse(false, $e->getMessage());
+        }
+
+        $this->assertTrue(true);
+    }
+
+    public function test_supportticket_event_resolved_at_filter_end()
+    {
+        try {
+            $request = new Request(
+                [
+                'resolved_atEnd'  =>  now()
+                ]
+            );
+
+            $filter = new SupportTicketQueryFilter($request);
+
+            $model = \NextDeveloper\Support\Database\Models\SupportTicket::filter($filter)->first();
+        } catch (\Exception $e) {
+            $this->assertFalse(false, $e->getMessage());
+        }
+
+        $this->assertTrue(true);
+    }
+
+    public function test_supportticket_event_sla_resolution_due_at_filter_end()
+    {
+        try {
+            $request = new Request(
+                [
+                'sla_resolution_due_atEnd'  =>  now()
                 ]
             );
 
@@ -680,6 +837,66 @@ trait SupportTicketTestTraits
                 [
                 'deleted_atStart'  =>  now(),
                 'deleted_atEnd'  =>  now()
+                ]
+            );
+
+            $filter = new SupportTicketQueryFilter($request);
+
+            $model = \NextDeveloper\Support\Database\Models\SupportTicket::filter($filter)->first();
+        } catch (\Exception $e) {
+            $this->assertFalse(false, $e->getMessage());
+        }
+
+        $this->assertTrue(true);
+    }
+
+    public function test_supportticket_event_first_response_at_filter_start_and_end()
+    {
+        try {
+            $request = new Request(
+                [
+                'first_response_atStart'  =>  now(),
+                'first_response_atEnd'  =>  now()
+                ]
+            );
+
+            $filter = new SupportTicketQueryFilter($request);
+
+            $model = \NextDeveloper\Support\Database\Models\SupportTicket::filter($filter)->first();
+        } catch (\Exception $e) {
+            $this->assertFalse(false, $e->getMessage());
+        }
+
+        $this->assertTrue(true);
+    }
+
+    public function test_supportticket_event_resolved_at_filter_start_and_end()
+    {
+        try {
+            $request = new Request(
+                [
+                'resolved_atStart'  =>  now(),
+                'resolved_atEnd'  =>  now()
+                ]
+            );
+
+            $filter = new SupportTicketQueryFilter($request);
+
+            $model = \NextDeveloper\Support\Database\Models\SupportTicket::filter($filter)->first();
+        } catch (\Exception $e) {
+            $this->assertFalse(false, $e->getMessage());
+        }
+
+        $this->assertTrue(true);
+    }
+
+    public function test_supportticket_event_sla_resolution_due_at_filter_start_and_end()
+    {
+        try {
+            $request = new Request(
+                [
+                'sla_resolution_due_atStart'  =>  now(),
+                'sla_resolution_due_atEnd'  =>  now()
                 ]
             );
 

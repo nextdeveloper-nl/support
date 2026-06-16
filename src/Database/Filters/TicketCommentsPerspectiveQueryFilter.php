@@ -180,4 +180,5 @@ class TicketCommentsPerspectiveQueryFilter extends AbstractQueryFilter
 
 
 
+
 }
