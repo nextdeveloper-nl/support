@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use NextDeveloper\Commons\Exceptions\NotAllowedException;
 use NextDeveloper\Events\Services\Events;
 use NextDeveloper\IAM\Helpers\UserHelper;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * Class TestsObserver

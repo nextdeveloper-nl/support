@@ -12,6 +12,8 @@ use NextDeveloper\Support\Services\AbstractServices\AbstractTicketCommentsServic
  * This class is responsible from managing the data for TicketComments
  *
  * Class TicketCommentsService.
+ *
+ * @package NextDeveloper\Support\Database\Models
  */
 class TicketCommentsService extends AbstractTicketCommentsService
 {
@@ -27,9 +29,8 @@ class TicketCommentsService extends AbstractTicketCommentsService
     }
 
     /**
-     * Stamps first_response_at on the parent ticket the first time a support agent
-     * posts a public (non-internal) reply. This is the SLA first-response clock-stop
-     * and underpins the response-time metric.
+     * Stamps first_response_at on the ticket the first time a support agent posts a
+     * public (non-internal) reply — the SLA first-response clock-stop.
      */
     private static function stampFirstResponse(TicketComments $comment): void
     {

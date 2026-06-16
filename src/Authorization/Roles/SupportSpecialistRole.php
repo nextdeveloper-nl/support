@@ -59,11 +59,11 @@ class SupportSpecialistRole extends AbstractRole implements IAuthorizationRole
             'support_kb_articles:read',
             'support_kb_articles:create',
             'support_kb_articles:update',
-            'support_agent_expertise:read',
-            'support_agent_expertise:create',
-            'support_agent_expertise:update',
+            'support_agent_expertises:read',
+            'support_agent_expertises:create',
+            'support_agent_expertises:update',
             'support_sla_policies:read',
-            'support_csat:read',
+            'support_csats:read',
         ];
     }
 

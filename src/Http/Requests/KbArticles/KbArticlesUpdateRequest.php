@@ -22,7 +22,6 @@ class KbArticlesUpdateRequest extends AbstractFormRequest
         'view_count' => 'integer',
         'helpful_count' => 'integer',
         'not_helpful_count' => 'integer',
-        'tags' => 'string',
         ];
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
