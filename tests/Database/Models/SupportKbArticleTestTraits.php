@@ -62,7 +62,6 @@ trait SupportKbArticleTestTraits
                 'slug'  =>  'a',
                 'body'  =>  'a',
                 'excerpt'  =>  'a',
-                'tags'  =>  'a',
                 'view_count'  =>  '1',
                 'helpful_count'  =>  '1',
                 'not_helpful_count'  =>  '1',
@@ -411,25 +410,6 @@ trait SupportKbArticleTestTraits
             $request = new Request(
                 [
                 'excerpt'  =>  'a'
-                ]
-            );
-
-            $filter = new SupportKbArticleQueryFilter($request);
-
-            $model = \NextDeveloper\Support\Database\Models\SupportKbArticle::filter($filter)->first();
-        } catch (\Exception $e) {
-            $this->assertFalse(false, $e->getMessage());
-        }
-
-        $this->assertTrue(true);
-    }
-
-    public function test_supportkbarticle_event_tags_filter()
-    {
-        try {
-            $request = new Request(
-                [
-                'tags'  =>  'a'
                 ]
             );
 

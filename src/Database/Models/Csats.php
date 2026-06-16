@@ -36,7 +36,7 @@ class Csats extends Model
 
     public $timestamps = true;
 
-    protected $table = 'support_csat';
+    protected $table = 'support_csats';
 
 
     /**
@@ -120,7 +120,7 @@ class Csats extends Model
     public static function registerScopes()
     {
         $globalScopes = config('support.scopes.global');
-        $modelScopes = config('support.scopes.support_csat');
+        $modelScopes = config('support.scopes.support_csats');
 
         if(!$modelScopes) { $modelScopes = [];
         }

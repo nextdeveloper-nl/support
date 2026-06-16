@@ -73,14 +73,14 @@ class SupportAdminRole extends AbstractRole implements IAuthorizationRole
             'support_sla_policies:create',
             'support_sla_policies:update',
             'support_sla_policies:delete',
-            'support_agent_expertise:read',
-            'support_agent_expertise:create',
-            'support_agent_expertise:update',
-            'support_agent_expertise:delete',
-            'support_csat:read',
-            'support_csat:create',
-            'support_csat:update',
-            'support_csat:delete',
+            'support_agent_expertises:read',
+            'support_agent_expertises:create',
+            'support_agent_expertises:update',
+            'support_agent_expertises:delete',
+            'support_csats:read',
+            'support_csats:create',
+            'support_csats:update',
+            'support_csats:delete',
         ];
     }
 

@@ -29,7 +29,6 @@ use NextDeveloper\Commons\Database\Traits\RunAsAdministrator;
  * @property integer $view_count
  * @property integer $helpful_count
  * @property integer $not_helpful_count
- * @property string $tags
  * @property integer $iam_account_id
  * @property integer $iam_user_id
  * @property string $category_name
@@ -63,7 +62,6 @@ class KbArticlesPerspective extends Model
             'view_count',
             'helpful_count',
             'not_helpful_count',
-            'tags',
             'iam_account_id',
             'iam_user_id',
             'category_name',
@@ -100,7 +98,6 @@ class KbArticlesPerspective extends Model
     'view_count' => 'integer',
     'helpful_count' => 'integer',
     'not_helpful_count' => 'integer',
-    'tags' => 'string',
     'category_name' => 'string',
     'author_name' => 'string',
     'created_at' => 'datetime',

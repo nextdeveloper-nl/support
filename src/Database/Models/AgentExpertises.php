@@ -36,7 +36,7 @@ class AgentExpertises extends Model
 
     public $timestamps = true;
 
-    protected $table = 'support_agent_expertise';
+    protected $table = 'support_agent_expertises';
 
 
     /**
@@ -120,7 +120,7 @@ class AgentExpertises extends Model
     public static function registerScopes()
     {
         $globalScopes = config('support.scopes.global');
-        $modelScopes = config('support.scopes.support_agent_expertise');
+        $modelScopes = config('support.scopes.support_agent_expertises');
 
         if(!$modelScopes) { $modelScopes = [];
         }

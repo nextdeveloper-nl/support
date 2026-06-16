@@ -9,6 +9,8 @@ use NextDeveloper\Support\Services\AbstractServices\AbstractKbArticlesService;
  * This class is responsible from managing the data for KbArticles
  *
  * Class KbArticlesService.
+ *
+ * @package NextDeveloper\Support\Database\Models
  */
 class KbArticlesService extends AbstractKbArticlesService
 {
@@ -16,6 +18,10 @@ class KbArticlesService extends AbstractKbArticlesService
 
     public static function create(array $data)
     {
+        if (empty($data['slug']) && ! empty($data['title'])) {
+            $data['slug'] = \Illuminate\Support\Str::slug($data['title']).'-'.substr(md5((string) microtime(true)), 0, 6);
+        }
+
         return parent::create(self::normalizeCategory($data));
     }
 
@@ -25,7 +31,7 @@ class KbArticlesService extends AbstractKbArticlesService
     }
 
     /**
-     * Converts a category uuid coming from the API to the integer FK the column expects.
+     * Converts a category uuid from the API to the integer FK the column expects.
      *
      * @param  array<string, mixed>  $data
      * @return array<string, mixed>

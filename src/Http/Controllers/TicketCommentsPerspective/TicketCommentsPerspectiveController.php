@@ -12,7 +12,7 @@ use NextDeveloper\Support\Http\Controllers\AbstractController;
 use NextDeveloper\Support\Http\Requests\TicketCommentsPerspective\TicketCommentsPerspectiveCreateRequest;
 use NextDeveloper\Support\Http\Requests\TicketCommentsPerspective\TicketCommentsPerspectiveUpdateRequest;
 use NextDeveloper\Support\Services\TicketCommentsPerspectiveService;
-
+use NextDeveloper\Commons\Http\Traits\Tags as TagsTrait;use NextDeveloper\Commons\Http\Traits\Addresses as AddressesTrait;
 class TicketCommentsPerspectiveController extends AbstractController
 {
     private $model = TicketCommentsPerspective::class;

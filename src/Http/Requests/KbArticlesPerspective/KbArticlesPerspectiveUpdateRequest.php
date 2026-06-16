@@ -22,7 +22,6 @@ class KbArticlesPerspectiveUpdateRequest extends AbstractFormRequest
         'view_count' => 'nullable|integer',
         'helpful_count' => 'nullable|integer',
         'not_helpful_count' => 'nullable|integer',
-        'tags' => 'nullable|string',
         'category_name' => 'nullable|string',
         'author_name' => 'nullable|string',
         ];

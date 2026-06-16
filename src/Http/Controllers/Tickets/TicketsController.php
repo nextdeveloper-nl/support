@@ -2,7 +2,10 @@
 
 namespace NextDeveloper\Support\Http\Controllers\Tickets;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Laravel\Octane\Exceptions\DdException;
+use NextDeveloper\Commons\Exceptions\CannotCreateModelException;
 use NextDeveloper\Commons\Http\Response\ResponsableFactory;
 use NextDeveloper\Commons\Http\Traits\Addresses;
 use NextDeveloper\Commons\Http\Traits\Tags;
@@ -12,13 +15,13 @@ use NextDeveloper\Support\Http\Controllers\AbstractController;
 use NextDeveloper\Support\Http\Requests\Tickets\TicketsCreateRequest;
 use NextDeveloper\Support\Http\Requests\Tickets\TicketsUpdateRequest;
 use NextDeveloper\Support\Services\TicketsService;
-
+use NextDeveloper\Commons\Http\Traits\Tags as TagsTrait;use NextDeveloper\Commons\Http\Traits\Addresses as AddressesTrait;
 class TicketsController extends AbstractController
 {
     private $model = Tickets::class;
 
-    use Tags;
-    use Addresses;
+    use TagsTrait;
+    use AddressesTrait;
     /**
      * This method returns the list of tickets.
      *
@@ -34,6 +37,36 @@ class TicketsController extends AbstractController
         $data = TicketsService::get($filter, $request->all());
 
         return ResponsableFactory::makeResponse($this, $data);
+    }
+
+    /**
+     * This function returns the list of actions that can be performed on this object.
+     *
+     * @return void
+     */
+    public function getActions()
+    {
+        $data = TicketsService::getActions();
+
+        return ResponsableFactory::makeResponse($this, $data);
+    }
+
+    /**
+     * Makes the related action to the object
+     *
+     * @param  $objectId
+     * @param  $action
+     * @return array
+     */
+    public function doAction($objectId, $action)
+    {
+        $actionId = TicketsService::doAction($objectId, $action, request()->all());
+
+        return $this->withArray(
+            [
+            'action_id' =>  $actionId
+            ]
+        );
     }
 
     /**
@@ -78,6 +111,12 @@ class TicketsController extends AbstractController
      */
     public function store(TicketsCreateRequest $request)
     {
+        if($request->has('validateOnly') && $request->get('validateOnly') == true) {
+            return [
+                'validation'    =>  'success'
+            ];
+        }
+
         $model = TicketsService::create($request->validated());
 
         return ResponsableFactory::makeResponse($this, $model);
@@ -87,12 +126,18 @@ class TicketsController extends AbstractController
      * This method updates Tickets object on database.
      *
      * @param  $ticketsId
-     * @param  CountryCreateRequest $request
+     * @param  TicketsUpdateRequest $request
      * @return mixed|null
      * @throws \NextDeveloper\Commons\Exceptions\CannotCreateModelException
      */
     public function update($ticketsId, TicketsUpdateRequest $request)
     {
+        if($request->has('validateOnly') && $request->get('validateOnly') == true) {
+            return [
+                'validation'    =>  'success'
+            ];
+        }
+
         $model = TicketsService::update($ticketsId, $request->validated());
 
         return ResponsableFactory::makeResponse($this, $model);
@@ -102,7 +147,6 @@ class TicketsController extends AbstractController
      * This method updates Tickets object on database.
      *
      * @param  $ticketsId
-     * @param  CountryCreateRequest $request
      * @return mixed|null
      * @throws \NextDeveloper\Commons\Exceptions\CannotCreateModelException
      */

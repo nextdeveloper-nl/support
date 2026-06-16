@@ -70,7 +70,6 @@ class AbstractKbArticlesPerspectiveTransformer extends AbstractTransformer
             'view_count'  =>  $model->view_count,
             'helpful_count'  =>  $model->helpful_count,
             'not_helpful_count'  =>  $model->not_helpful_count,
-            'tags'  =>  $model->tags,
             'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,
             'iam_user_id'  =>  $iamUserId ? $iamUserId->uuid : null,
             'category_name'  =>  $model->category_name,

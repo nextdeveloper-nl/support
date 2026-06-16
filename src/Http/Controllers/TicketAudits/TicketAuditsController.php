@@ -12,13 +12,13 @@ use NextDeveloper\Support\Http\Controllers\AbstractController;
 use NextDeveloper\Support\Http\Requests\TicketAudits\TicketAuditsCreateRequest;
 use NextDeveloper\Support\Http\Requests\TicketAudits\TicketAuditsUpdateRequest;
 use NextDeveloper\Support\Services\TicketAuditsService;
-
+use NextDeveloper\Commons\Http\Traits\Tags as TagsTrait;use NextDeveloper\Commons\Http\Traits\Addresses as AddressesTrait;
 class TicketAuditsController extends AbstractController
 {
     private $model = TicketAudits::class;
 
-    use Tags;
-    use Addresses;
+    use TagsTrait;
+    use AddressesTrait;
     /**
      * This method returns the list of ticketaudits.
      *
@@ -34,6 +34,36 @@ class TicketAuditsController extends AbstractController
         $data = TicketAuditsService::get($filter, $request->all());
 
         return ResponsableFactory::makeResponse($this, $data);
+    }
+
+    /**
+     * This function returns the list of actions that can be performed on this object.
+     *
+     * @return void
+     */
+    public function getActions()
+    {
+        $data = TicketAuditsService::getActions();
+
+        return ResponsableFactory::makeResponse($this, $data);
+    }
+
+    /**
+     * Makes the related action to the object
+     *
+     * @param  $objectId
+     * @param  $action
+     * @return array
+     */
+    public function doAction($objectId, $action)
+    {
+        $actionId = TicketAuditsService::doAction($objectId, $action, request()->all());
+
+        return $this->withArray(
+            [
+            'action_id' =>  $actionId
+            ]
+        );
     }
 
     /**
@@ -78,6 +108,12 @@ class TicketAuditsController extends AbstractController
      */
     public function store(TicketAuditsCreateRequest $request)
     {
+        if($request->has('validateOnly') && $request->get('validateOnly') == true) {
+            return [
+                'validation'    =>  'success'
+            ];
+        }
+
         $model = TicketAuditsService::create($request->validated());
 
         return ResponsableFactory::makeResponse($this, $model);
@@ -87,12 +123,18 @@ class TicketAuditsController extends AbstractController
      * This method updates TicketAudits object on database.
      *
      * @param  $ticketAuditsId
-     * @param  CountryCreateRequest $request
+     * @param  TicketAuditsUpdateRequest $request
      * @return mixed|null
      * @throws \NextDeveloper\Commons\Exceptions\CannotCreateModelException
      */
     public function update($ticketAuditsId, TicketAuditsUpdateRequest $request)
     {
+        if($request->has('validateOnly') && $request->get('validateOnly') == true) {
+            return [
+                'validation'    =>  'success'
+            ];
+        }
+
         $model = TicketAuditsService::update($ticketAuditsId, $request->validated());
 
         return ResponsableFactory::makeResponse($this, $model);
@@ -102,7 +144,6 @@ class TicketAuditsController extends AbstractController
      * This method updates TicketAudits object on database.
      *
      * @param  $ticketAuditsId
-     * @param  CountryCreateRequest $request
      * @return mixed|null
      * @throws \NextDeveloper\Commons\Exceptions\CannotCreateModelException
      */
