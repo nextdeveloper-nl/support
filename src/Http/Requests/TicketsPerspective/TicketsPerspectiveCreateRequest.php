@@ -32,7 +32,7 @@ class TicketsPerspectiveCreateRequest extends AbstractFormRequest
         'is_first_contact_resolution' => 'nullable|boolean',
         'object_id' => 'nullable',
         'object_type' => 'nullable|string',
-        'responsible_user_id' => 'nullable|exists:responsible_users,uuid|uuid',
+        'responsible_user_id' => 'nullable|exists:iam_users,uuid|uuid',
         'time_spent' => 'nullable|integer',
         'watcher_user_ids' => 'nullable',
         'watcher_account_ids' => 'nullable',

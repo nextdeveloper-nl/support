@@ -4,6 +4,9 @@ namespace NextDeveloper\Support\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
+use NextDeveloper\Commons\Database\Models\Categories;
+use NextDeveloper\IAM\Database\Models\Accounts;
+use NextDeveloper\IAM\Database\Models\Users;
             
 
 /**
@@ -12,26 +15,6 @@ use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
  */
 class KbArticlesPerspectiveQueryFilter extends AbstractQueryFilter
 {
-    /**
-     * Filter by tags
-     *
-     * @param  $values
-     * @return Builder
-     */
-    public function tags($values)
-    {
-        $tags = explode(',', $values);
-
-        $search = '';
-
-        for($i = 0; $i < count($tags); $i++) {
-            $search .= "'" . trim($tags[$i]) . "',";
-        }
-
-        $search = substr($search, 0, -1);
-
-        return $this->builder->whereRaw('tags @> ARRAY[' . $search . ']');
-    }
 
     /**
      * @var Builder
@@ -59,12 +42,6 @@ class KbArticlesPerspectiveQueryFilter extends AbstractQueryFilter
     public function excerpt($value)
     {
         return $this->builder->where('excerpt', 'ilike', '%' . $value . '%');
-    }
-
-        
-    public function tags($value)
-    {
-        return $this->builder->where('tags', 'ilike', '%' . $value . '%');
     }
 
         

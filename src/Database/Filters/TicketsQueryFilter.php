@@ -4,6 +4,9 @@ namespace NextDeveloper\Support\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
+use NextDeveloper\Commons\Database\Models\Categories;
+use NextDeveloper\IAM\Database\Models\Accounts;
+use NextDeveloper\IAM\Database\Models\Users;
                     
 
 /**
@@ -357,7 +360,7 @@ class TicketsQueryFilter extends AbstractQueryFilter
     
     public function supportSeekerAccountId($value)
     {
-            $supportSeekerAccount = \NextDeveloper\Support\Database\Models\SeekerAccounts::where('uuid', $value)->first();
+            $supportSeekerAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('uuid', $value)->first();
 
         if($supportSeekerAccount) {
             return $this->builder->where('support_seeker_account_id', '=', $supportSeekerAccount->id);
@@ -386,12 +389,4 @@ class TicketsQueryFilter extends AbstractQueryFilter
     }
     
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
-
-
-
-
-
-
-
-
 }

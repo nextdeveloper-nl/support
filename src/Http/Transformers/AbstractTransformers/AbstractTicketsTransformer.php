@@ -4,6 +4,7 @@ namespace NextDeveloper\Support\Http\Transformers\AbstractTransformers;
 
 use NextDeveloper\Commons\Database\Models\Addresses;
 use NextDeveloper\Commons\Database\Models\AvailableActions;
+use NextDeveloper\Commons\Database\Models\Categories;
 use NextDeveloper\Commons\Database\Models\Comments;
 use NextDeveloper\Commons\Database\Models\Media;
 use NextDeveloper\Commons\Database\Models\Meta;
@@ -21,6 +22,8 @@ use NextDeveloper\Commons\Http\Transformers\PhoneNumbersTransformer;
 use NextDeveloper\Commons\Http\Transformers\SocialMediaTransformer;
 use NextDeveloper\Commons\Http\Transformers\StatesTransformer;
 use NextDeveloper\Commons\Http\Transformers\VotesTransformer;
+use NextDeveloper\IAM\Database\Models\Accounts;
+use NextDeveloper\IAM\Database\Models\Users;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 use NextDeveloper\Support\Database\Models\Tickets;
 
@@ -57,7 +60,7 @@ class AbstractTicketsTransformer extends AbstractTransformer
                                                 $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
                                                             $iamUserId = \NextDeveloper\IAM\Database\Models\Users::where('id', $model->iam_user_id)->first();
                                                             $responsibleUserId = \NextDeveloper\IAM\Database\Models\Users::where('id', $model->responsible_user_id)->first();
-                                                            $supportSeekerAccountId = \NextDeveloper\Support\Database\Models\SeekerAccounts::where('id', $model->support_seeker_account_id)->first();
+                                                            $supportSeekerAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->support_seeker_account_id)->first();
                                                             $commonCategoryId = \NextDeveloper\Commons\Database\Models\Categories::where('id', $model->common_category_id)->first();
                         
         return $this->buildPayload(
@@ -180,8 +183,4 @@ class AbstractTicketsTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
-
-
-
-
 }

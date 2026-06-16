@@ -12,13 +12,13 @@ use NextDeveloper\Support\Http\Controllers\AbstractController;
 use NextDeveloper\Support\Http\Requests\TicketComments\TicketCommentsCreateRequest;
 use NextDeveloper\Support\Http\Requests\TicketComments\TicketCommentsUpdateRequest;
 use NextDeveloper\Support\Services\TicketCommentsService;
-
+use NextDeveloper\Commons\Http\Traits\Tags as TagsTrait;use NextDeveloper\Commons\Http\Traits\Addresses as AddressesTrait;
 class TicketCommentsController extends AbstractController
 {
     private $model = TicketComments::class;
 
-    use Tags;
-    use Addresses;
+    use TagsTrait;
+    use AddressesTrait;
     /**
      * This method returns the list of ticketcomments.
      *
@@ -34,6 +34,36 @@ class TicketCommentsController extends AbstractController
         $data = TicketCommentsService::get($filter, $request->all());
 
         return ResponsableFactory::makeResponse($this, $data);
+    }
+
+    /**
+     * This function returns the list of actions that can be performed on this object.
+     *
+     * @return void
+     */
+    public function getActions()
+    {
+        $data = TicketCommentsService::getActions();
+
+        return ResponsableFactory::makeResponse($this, $data);
+    }
+
+    /**
+     * Makes the related action to the object
+     *
+     * @param  $objectId
+     * @param  $action
+     * @return array
+     */
+    public function doAction($objectId, $action)
+    {
+        $actionId = TicketCommentsService::doAction($objectId, $action, request()->all());
+
+        return $this->withArray(
+            [
+            'action_id' =>  $actionId
+            ]
+        );
     }
 
     /**
@@ -78,6 +108,12 @@ class TicketCommentsController extends AbstractController
      */
     public function store(TicketCommentsCreateRequest $request)
     {
+        if($request->has('validateOnly') && $request->get('validateOnly') == true) {
+            return [
+                'validation'    =>  'success'
+            ];
+        }
+
         $model = TicketCommentsService::create($request->validated());
 
         return ResponsableFactory::makeResponse($this, $model);
@@ -87,12 +123,18 @@ class TicketCommentsController extends AbstractController
      * This method updates TicketComments object on database.
      *
      * @param  $ticketCommentsId
-     * @param  CountryCreateRequest $request
+     * @param  TicketCommentsUpdateRequest $request
      * @return mixed|null
      * @throws \NextDeveloper\Commons\Exceptions\CannotCreateModelException
      */
     public function update($ticketCommentsId, TicketCommentsUpdateRequest $request)
     {
+        if($request->has('validateOnly') && $request->get('validateOnly') == true) {
+            return [
+                'validation'    =>  'success'
+            ];
+        }
+
         $model = TicketCommentsService::update($ticketCommentsId, $request->validated());
 
         return ResponsableFactory::makeResponse($this, $model);
@@ -102,7 +144,6 @@ class TicketCommentsController extends AbstractController
      * This method updates TicketComments object on database.
      *
      * @param  $ticketCommentsId
-     * @param  CountryCreateRequest $request
      * @return mixed|null
      * @throws \NextDeveloper\Commons\Exceptions\CannotCreateModelException
      */

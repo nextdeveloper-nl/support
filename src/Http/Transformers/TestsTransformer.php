@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Cache;
 use NextDeveloper\Commons\Common\Cache\CacheHelper;
 use NextDeveloper\Support\Database\Models\Tests;
 use NextDeveloper\Support\Http\Transformers\AbstractTransformers\AbstractTestsTransformer;
+use NextDeveloper\Commons\Http\Transformers\AbstractTransformer;
 
 /**
  * Class TestsTransformer. This class is being used to manipulate the data we are serving to the customer

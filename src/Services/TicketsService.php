@@ -14,14 +14,16 @@ use NextDeveloper\Support\Services\AbstractServices\AbstractTicketsService;
  * This class is responsible from managing the data for Tickets
  *
  * Class TicketsService.
+ *
+ * @package NextDeveloper\Support\Database\Models
  */
 class TicketsService extends AbstractTicketsService
 {
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
     public static function update($id, array $data)
     {
-        // We are removing this because we don't want to update the time spent on the ticket
-        // This is because the time spent is calculated automatically
+        // time_spent is calculated automatically; never accept it from the client.
         if (array_key_exists('time_spent', $data)) {
             unset($data['time_spent']);
         }
@@ -33,10 +35,7 @@ class TicketsService extends AbstractTicketsService
 
     public static function create(array $data)
     {
-        if (array_key_exists('support_seeker_account_id', $data)) {
-            //  Here we will send the support seeker an email
-        } else {
-            //  This means that ticket is created by the account owner
+        if (! array_key_exists('support_seeker_account_id', $data)) {
             $data['support_seeker_account_id'] = UserHelper::currentAccount()->id;
         }
 
@@ -53,9 +52,9 @@ class TicketsService extends AbstractTicketsService
     }
 
     /**
-     * Stamps the response and resolution SLA due-dates on a new ticket from the
-     * active SLA policy that matches its priority. response_time holds the
-     * first-response deadline; sla_resolution_due_at holds the resolution deadline.
+     * Stamps response/resolution SLA due-dates from the active policy matching the
+     * ticket priority. response_time = first-response deadline; sla_resolution_due_at
+     * = resolution deadline.
      *
      * @param  array<string, mixed>  $data
      * @return array<string, mixed>
@@ -87,8 +86,7 @@ class TicketsService extends AbstractTicketsService
     }
 
     /**
-     * Accepts a category uuid from the API and converts it to the integer FK the
-     * column expects (the abstract service only auto-converts iam_* references).
+     * Converts a category uuid from the API to the integer FK the column expects.
      *
      * @param  array<string, mixed>  $data
      * @return array<string, mixed>

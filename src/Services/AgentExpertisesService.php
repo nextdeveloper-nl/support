@@ -9,6 +9,8 @@ use NextDeveloper\Support\Services\AbstractServices\AbstractAgentExpertisesServi
  * This class is responsible from managing the data for AgentExpertises
  *
  * Class AgentExpertisesService.
+ *
+ * @package NextDeveloper\Support\Database\Models
  */
 class AgentExpertisesService extends AbstractAgentExpertisesService
 {
