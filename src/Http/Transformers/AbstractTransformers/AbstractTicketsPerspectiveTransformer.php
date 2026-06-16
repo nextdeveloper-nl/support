@@ -57,7 +57,7 @@ class AbstractTicketsPerspectiveTransformer extends AbstractTransformer
                                                 $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
                                                             $iamUserId = \NextDeveloper\IAM\Database\Models\Users::where('id', $model->iam_user_id)->first();
                                                             $commonCategoryId = \NextDeveloper\Commons\Database\Models\Categories::where('id', $model->common_category_id)->first();
-                                                            $responsibleUserId = \NextDeveloper\\Database\Models\ResponsibleUsers::where('id', $model->responsible_user_id)->first();
+                                                            $responsibleUserId = \NextDeveloper\IAM\Database\Models\Users::where('id', $model->responsible_user_id)->first();
                                                             $supportSeekerAccountId = \NextDeveloper\Support\Database\Models\SeekerAccounts::where('id', $model->support_seeker_account_id)->first();
                                                             $iamAccountTypeId = \NextDeveloper\IAM\Database\Models\AccountTypes::where('id', $model->iam_account_type_id)->first();
                         

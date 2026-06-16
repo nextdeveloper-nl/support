@@ -24,7 +24,7 @@ class TicketsPerspectiveQueryFilter extends AbstractQueryFilter
 
         $search = '';
 
-        for($i = 0; $i < count($tags); $i++) {
+        for($i = 0, $iMax = count($tags); $i < $iMax; $i++) {
             $search .= "'" . trim($tags[$i]) . "',";
         }
 
@@ -444,7 +444,7 @@ class TicketsPerspectiveQueryFilter extends AbstractQueryFilter
     
     public function responsibleUserId($value)
     {
-            $responsibleUser = \NextDeveloper\\Database\Models\ResponsibleUsers::where('uuid', $value)->first();
+            $responsibleUser = \NextDeveloper\IAM\Database\Models\Users::where('uuid', $value)->first();
 
         if($responsibleUser) {
             return $this->builder->where('responsible_user_id', '=', $responsibleUser->id);
