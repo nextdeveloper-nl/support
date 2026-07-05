@@ -21,6 +21,13 @@ class TicketCommentsService extends AbstractTicketCommentsService
 
     public static function create(array $data)
     {
+        // Only support staff may post internal (customer-hidden) notes.
+        $isAgent = UserHelper::hasRole('support-admin') || UserHelper::hasRole('support-specialist');
+
+        if (! $isAgent) {
+            $data['is_internal'] = false;
+        }
+
         $comment = parent::create($data);
 
         self::stampFirstResponse($comment);
