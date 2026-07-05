@@ -56,6 +56,16 @@ class ChangeStatus extends AbstractAction
             return;
         }
 
+        // Customers (non support staff) may only close their own ticket, not move it
+        // through the agent workflow (pending/resolved/etc.).
+        $isAgent = UserHelper::hasRole('support-admin') || UserHelper::hasRole('support-specialist');
+
+        if (! $isAgent && $new !== 'closed') {
+            $this->setFinishedWithError('You can only close this ticket.');
+
+            return;
+        }
+
         $data = ['status' => $new];
 
         $wasClosed = in_array($old, self::CLOSED_STATUSES, true);

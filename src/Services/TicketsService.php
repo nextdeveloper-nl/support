@@ -3,6 +3,7 @@
 namespace NextDeveloper\Support\Services;
 
 use NextDeveloper\Commons\Helpers\DatabaseHelper;
+use NextDeveloper\IAM\Database\Models\Accounts;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 use NextDeveloper\IAM\Helpers\UserHelper;
 use NextDeveloper\Support\Actions\Tickets\AutoRouteTicket;
@@ -35,10 +36,7 @@ class TicketsService extends AbstractTicketsService
 
     public static function create(array $data)
     {
-        if (! array_key_exists('support_seeker_account_id', $data)) {
-            $data['support_seeker_account_id'] = UserHelper::currentAccount()->id;
-        }
-
+        $data = self::resolveSeekerAccount($data);
         $data = self::normalizeCategory($data);
         $data = self::applySlaDueDates($data);
 
@@ -81,6 +79,41 @@ class TicketsService extends AbstractTicketsService
         if (! array_key_exists('sla_resolution_due_at', $data) || ! $data['sla_resolution_due_at']) {
             $data['sla_resolution_due_at'] = now()->addMinutes($policy->resolution_target_minutes);
         }
+
+        return $data;
+    }
+
+    /**
+     * Resolves which account the ticket is for. Support staff (admin/specialist) may file on
+     * behalf of any account (support_seeker_account_id, uuid → id). Everyone else — and the
+     * default — is forced to their own account, so a customer cannot file for someone else
+     * even by tampering with the payload.
+     *
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    private static function resolveSeekerAccount(array $data): array
+    {
+        $isAgent = UserHelper::hasRole('support-admin') || UserHelper::hasRole('support-specialist');
+        $seeker = $data['support_seeker_account_id'] ?? null;
+
+        if ($isAgent && $seeker) {
+            if (! is_numeric($seeker)) {
+                //  Resolve without the authorization scope: an agent files on behalf of any
+                //  account, which is (by design) outside their own account's visibility.
+                $seeker = Accounts::withoutGlobalScope(AuthorizationScope::class)
+                    ->where('uuid', $seeker)
+                    ->value('id');
+            }
+
+            if ($seeker) {
+                $data['support_seeker_account_id'] = $seeker;
+
+                return $data;
+            }
+        }
+
+        $data['support_seeker_account_id'] = UserHelper::currentAccount()->id;
 
         return $data;
     }
