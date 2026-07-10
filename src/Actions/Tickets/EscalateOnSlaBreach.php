@@ -5,8 +5,8 @@ namespace NextDeveloper\Support\Actions\Tickets;
 use NextDeveloper\Commons\Actions\AbstractAction;
 use NextDeveloper\Commons\Common\Cache\CacheHelper;
 use NextDeveloper\Events\Services\Events;
-use NextDeveloper\IAM\Helpers\UserHelper;
 use NextDeveloper\Support\Database\Models\Tickets;
+use NextDeveloper\Support\Services\TicketsService;
 
 /**
  * Escalates a ticket whose SLA has been breached: raises its priority (capped at 5)
@@ -36,12 +36,10 @@ class EscalateOnSlaBreach extends AbstractAction
 
         $newPriority = min((int) $this->model->priority + 1, 5);
 
-        UserHelper::runAsAdmin(function () use ($newPriority): void {
-            $this->model->update([
-                'priority' => $newPriority,
-                'level' => min((int) $this->model->level + 1, 5),
-            ]);
-        });
+        TicketsService::privilegedUpdate($this->model, [
+            'priority' => $newPriority,
+            'level' => min((int) $this->model->level + 1, 5),
+        ]);
 
         CacheHelper::deleteKeys(Tickets::class, $this->model->uuid);
 

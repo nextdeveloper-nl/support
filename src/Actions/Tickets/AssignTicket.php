@@ -7,6 +7,7 @@ use NextDeveloper\Commons\Common\Cache\CacheHelper;
 use NextDeveloper\Events\Services\Events;
 use NextDeveloper\IAM\Helpers\UserHelper;
 use NextDeveloper\Support\Database\Models\Tickets;
+use NextDeveloper\Support\Services\TicketsService;
 
 /**
  * Assigns a support ticket to an agent by writing responsible_user_id.
@@ -43,11 +44,9 @@ class AssignTicket extends AbstractAction
 
         $this->setProgress(50, 'Saving assignment');
 
-        UserHelper::runAsAdmin(function () use ($agent): void {
-            $this->model->update([
-                'responsible_user_id' => $agent->id,
-            ]);
-        });
+        TicketsService::privilegedUpdate($this->model, [
+            'responsible_user_id' => $agent->id,
+        ]);
 
         CacheHelper::deleteKeys(Tickets::class, $this->model->uuid);
 

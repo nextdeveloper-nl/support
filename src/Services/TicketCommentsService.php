@@ -12,8 +12,6 @@ use NextDeveloper\Support\Services\AbstractServices\AbstractTicketCommentsServic
  * This class is responsible from managing the data for TicketComments
  *
  * Class TicketCommentsService.
- *
- * @package NextDeveloper\Support\Database\Models
  */
 class TicketCommentsService extends AbstractTicketCommentsService
 {
@@ -58,8 +56,6 @@ class TicketCommentsService extends AbstractTicketCommentsService
             return;
         }
 
-        UserHelper::runAsAdmin(function () use ($ticket): void {
-            $ticket->update(['first_response_at' => now()]);
-        });
+        TicketsService::privilegedUpdate($ticket, ['first_response_at' => now()]);
     }
 }

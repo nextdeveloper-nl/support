@@ -6,9 +6,9 @@ use NextDeveloper\Commons\Actions\AbstractAction;
 use NextDeveloper\Commons\Common\Cache\CacheHelper;
 use NextDeveloper\Events\Services\Events;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
-use NextDeveloper\IAM\Helpers\UserHelper;
 use NextDeveloper\Support\Database\Models\AgentExpertises;
 use NextDeveloper\Support\Database\Models\Tickets;
+use NextDeveloper\Support\Services\TicketsService;
 
 /**
  * Skill-based routing: assigns a newly created ticket to the most suitable agent for
@@ -63,11 +63,9 @@ class AutoRouteTicket extends AbstractAction
 
         $best = $candidates->sortBy(fn ($e) => self::openLoad($e->iam_user_id))->first();
 
-        UserHelper::runAsAdmin(function () use ($best): void {
-            $this->model->update([
-                'responsible_user_id' => $best->iam_user_id,
-            ]);
-        });
+        TicketsService::privilegedUpdate($this->model, [
+            'responsible_user_id' => $best->iam_user_id,
+        ]);
 
         CacheHelper::deleteKeys(Tickets::class, $this->model->uuid);
 

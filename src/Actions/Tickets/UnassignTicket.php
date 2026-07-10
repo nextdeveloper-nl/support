@@ -5,8 +5,8 @@ namespace NextDeveloper\Support\Actions\Tickets;
 use NextDeveloper\Commons\Actions\AbstractAction;
 use NextDeveloper\Commons\Common\Cache\CacheHelper;
 use NextDeveloper\Events\Services\Events;
-use NextDeveloper\IAM\Helpers\UserHelper;
 use NextDeveloper\Support\Database\Models\Tickets;
+use NextDeveloper\Support\Services\TicketsService;
 
 /**
  * Removes the agent assignment from a support ticket (clears responsible_user_id).
@@ -28,11 +28,9 @@ class UnassignTicket extends AbstractAction
     {
         $this->setProgress(0, 'Unassigning ticket');
 
-        UserHelper::runAsAdmin(function (): void {
-            $this->model->update([
-                'responsible_user_id' => null,
-            ]);
-        });
+        TicketsService::privilegedUpdate($this->model, [
+            'responsible_user_id' => null,
+        ]);
 
         CacheHelper::deleteKeys(Tickets::class, $this->model->uuid);
 
