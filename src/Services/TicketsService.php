@@ -15,12 +15,34 @@ use NextDeveloper\Support\Services\AbstractServices\AbstractTicketsService;
  * This class is responsible from managing the data for Tickets
  *
  * Class TicketsService.
- *
- * @package NextDeveloper\Support\Database\Models
  */
 class TicketsService extends AbstractTicketsService
 {
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+    /**
+     * Privileged ticket write used by lifecycle Actions (status/assignment/SLA/routing).
+     *
+     * These Actions have already authorized the operation at the action level and often run
+     * in contexts that cannot pass the model's per-record policy: the elevated admin lacks
+     * support ops, and SLA/routing jobs run with no current user at all. bypassRolesCheck
+     * short-circuits the TicketsObserver policy while the observer's domain events still fire
+     * (so NATS/live-sync keep working); runAsAdmin gives observer listeners a valid identity.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    public static function privilegedUpdate(Tickets $ticket, array $data): void
+    {
+        UserHelper::runAsAdmin(function () use ($ticket, $data): void {
+            UserHelper::bypassRolesCheck(true);
+
+            try {
+                $ticket->update($data);
+            } finally {
+                UserHelper::bypassRolesCheck(false);
+            }
+        });
+    }
 
     public static function update($id, array $data)
     {

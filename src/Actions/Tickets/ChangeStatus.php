@@ -8,6 +8,7 @@ use NextDeveloper\Events\Services\Events;
 use NextDeveloper\IAM\Helpers\UserHelper;
 use NextDeveloper\Support\Database\Models\TicketAudits;
 use NextDeveloper\Support\Database\Models\Tickets;
+use NextDeveloper\Support\Services\TicketsService;
 
 /**
  * Moves a support ticket through its lifecycle (open -> pending -> waiting_on_customer
@@ -90,29 +91,40 @@ class ChangeStatus extends AbstractAction
 
         $this->setProgress(50, 'Persisting status change');
 
-        UserHelper::runAsAdmin(function () use ($data): void {
-            $this->model->update($data);
-        });
+        TicketsService::privilegedUpdate($this->model, $data);
 
         $this->writeAudit($old, $new);
 
         CacheHelper::deleteKeys(Tickets::class, $this->model->uuid);
 
         $this->setProgress(90, 'Firing event');
-        Events::fire('status-changed:NextDeveloper\Support\Tickets', $this->model->fresh());
+        Events::fire('status-changed:NextDeveloper\Support\Tickets', $this->model->fresh(), [
+            'old' => $old,
+            'new' => $new,
+            'actor_id' => UserHelper::me() ? UserHelper::me()->id : null,
+        ]);
 
         $this->setFinished('Ticket status changed from '.$old.' to '.$new);
     }
 
     private function writeAudit(string $old, string $new): void
     {
+        //  Capture the real actor before elevating — inside runAsAdmin, me() is the admin.
+        $actorId = UserHelper::me() ? UserHelper::me()->id : $this->model->iam_user_id;
+
         try {
-            UserHelper::runAsAdmin(function () use ($old, $new): void {
-                TicketAudits::create([
-                    'comments' => 'Status changed from '.$old.' to '.$new,
-                    'iam_user_id' => UserHelper::me() ? UserHelper::me()->id : $this->model->iam_user_id,
-                    'point' => 0,
-                ]);
+            UserHelper::runAsAdmin(function () use ($old, $new, $actorId): void {
+                UserHelper::bypassRolesCheck(true);
+
+                try {
+                    TicketAudits::create([
+                        'comments' => 'Status changed from '.$old.' to '.$new,
+                        'iam_user_id' => $actorId,
+                        'point' => 0,
+                    ]);
+                } finally {
+                    UserHelper::bypassRolesCheck(false);
+                }
             });
         } catch (\Exception $e) {
             // Audit is best-effort; never block a status change because of it.
