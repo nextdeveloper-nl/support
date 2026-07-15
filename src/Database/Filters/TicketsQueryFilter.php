@@ -4,7 +4,10 @@ namespace NextDeveloper\Support\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
-                
+use NextDeveloper\Commons\Database\Models\Categories;
+use NextDeveloper\IAM\Database\Models\Accounts;
+use NextDeveloper\IAM\Database\Models\Users;
+                    
 
 /**
  * This class automatically puts where clause on database so that use can filter
@@ -60,6 +63,12 @@ class TicketsQueryFilter extends AbstractQueryFilter
     {
         return $this->objectType($value);
     }
+        
+    public function status($value)
+    {
+        return $this->builder->where('status', 'ilike', '%' . $value . '%');
+    }
+
     
     public function level($value)
     {
@@ -108,6 +117,25 @@ class TicketsQueryFilter extends AbstractQueryFilter
         return $this->timeSpent($value);
     }
     
+    public function reopenedCount($value)
+    {
+        $operator = substr($value, 0, 1);
+
+        if ($operator != '<' || $operator != '>') {
+            $operator = '=';
+        } else {
+            $value = substr($value, 1);
+        }
+
+        return $this->builder->where('reopened_count', $operator, $value);
+    }
+
+        //  This is an alias function of reopenedCount
+    public function reopened_count($value)
+    {
+        return $this->reopenedCount($value);
+    }
+    
     public function isClosed($value)
     {
         return $this->builder->where('is_closed', $value);
@@ -128,6 +156,17 @@ class TicketsQueryFilter extends AbstractQueryFilter
     public function is_public($value)
     {
         return $this->isPublic($value);
+    }
+     
+    public function isFirstContactResolution($value)
+    {
+        return $this->builder->where('is_first_contact_resolution', $value);
+    }
+
+        //  This is an alias function of isFirstContactResolution
+    public function is_first_contact_resolution($value)
+    {
+        return $this->isFirstContactResolution($value);
     }
      
     public function responseTimeStart($date)
@@ -218,6 +257,72 @@ class TicketsQueryFilter extends AbstractQueryFilter
         return $this->deletedAtEnd($value);
     }
 
+    public function firstResponseAtStart($date)
+    {
+        return $this->builder->where('first_response_at', '>=', $date);
+    }
+
+    public function firstResponseAtEnd($date)
+    {
+        return $this->builder->where('first_response_at', '<=', $date);
+    }
+
+    //  This is an alias function of firstResponseAt
+    public function first_response_at_start($value)
+    {
+        return $this->firstResponseAtStart($value);
+    }
+
+    //  This is an alias function of firstResponseAt
+    public function first_response_at_end($value)
+    {
+        return $this->firstResponseAtEnd($value);
+    }
+
+    public function resolvedAtStart($date)
+    {
+        return $this->builder->where('resolved_at', '>=', $date);
+    }
+
+    public function resolvedAtEnd($date)
+    {
+        return $this->builder->where('resolved_at', '<=', $date);
+    }
+
+    //  This is an alias function of resolvedAt
+    public function resolved_at_start($value)
+    {
+        return $this->resolvedAtStart($value);
+    }
+
+    //  This is an alias function of resolvedAt
+    public function resolved_at_end($value)
+    {
+        return $this->resolvedAtEnd($value);
+    }
+
+    public function slaResolutionDueAtStart($date)
+    {
+        return $this->builder->where('sla_resolution_due_at', '>=', $date);
+    }
+
+    public function slaResolutionDueAtEnd($date)
+    {
+        return $this->builder->where('sla_resolution_due_at', '<=', $date);
+    }
+
+    //  This is an alias function of slaResolutionDueAt
+    public function sla_resolution_due_at_start($value)
+    {
+        return $this->slaResolutionDueAtStart($value);
+    }
+
+    //  This is an alias function of slaResolutionDueAt
+    public function sla_resolution_due_at_end($value)
+    {
+        return $this->slaResolutionDueAtEnd($value);
+    }
+
     public function iamAccountId($value)
     {
             $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('uuid', $value)->first();
@@ -268,12 +373,20 @@ class TicketsQueryFilter extends AbstractQueryFilter
         return $this->supportSeekerAccount($value);
     }
     
+    public function commonCategoryId($value)
+    {
+            $commonCategory = \NextDeveloper\Commons\Database\Models\Categories::where('uuid', $value)->first();
+
+        if($commonCategory) {
+            return $this->builder->where('common_category_id', '=', $commonCategory->id);
+        }
+    }
+
+        //  This is an alias function of commonCategory
+    public function common_category_id($value)
+    {
+        return $this->commonCategory($value);
+    }
+    
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
-
-
-
-
-
-
-
 }

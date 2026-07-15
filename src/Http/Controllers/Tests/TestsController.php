@@ -12,13 +12,13 @@ use NextDeveloper\Support\Http\Controllers\AbstractController;
 use NextDeveloper\Support\Http\Requests\Tests\TestsCreateRequest;
 use NextDeveloper\Support\Http\Requests\Tests\TestsUpdateRequest;
 use NextDeveloper\Support\Services\TestsService;
-
+use NextDeveloper\Commons\Http\Traits\Tags as TagsTrait;use NextDeveloper\Commons\Http\Traits\Addresses as AddressesTrait;
 class TestsController extends AbstractController
 {
     private $model = Tests::class;
 
-    use Tags;
-    use Addresses;
+    use TagsTrait;
+    use AddressesTrait;
     /**
      * This method returns the list of tests.
      *
@@ -34,6 +34,36 @@ class TestsController extends AbstractController
         $data = TestsService::get($filter, $request->all());
 
         return ResponsableFactory::makeResponse($this, $data);
+    }
+
+    /**
+     * This function returns the list of actions that can be performed on this object.
+     *
+     * @return void
+     */
+    public function getActions()
+    {
+        $data = TestsService::getActions();
+
+        return ResponsableFactory::makeResponse($this, $data);
+    }
+
+    /**
+     * Makes the related action to the object
+     *
+     * @param  $objectId
+     * @param  $action
+     * @return array
+     */
+    public function doAction($objectId, $action)
+    {
+        $actionId = TestsService::doAction($objectId, $action, request()->all());
+
+        return $this->withArray(
+            [
+            'action_id' =>  $actionId
+            ]
+        );
     }
 
     /**
@@ -78,6 +108,12 @@ class TestsController extends AbstractController
      */
     public function store(TestsCreateRequest $request)
     {
+        if($request->has('validateOnly') && $request->get('validateOnly') == true) {
+            return [
+                'validation'    =>  'success'
+            ];
+        }
+
         $model = TestsService::create($request->validated());
 
         return ResponsableFactory::makeResponse($this, $model);
@@ -87,12 +123,18 @@ class TestsController extends AbstractController
      * This method updates Tests object on database.
      *
      * @param  $testsId
-     * @param  CountryCreateRequest $request
+     * @param  TestsUpdateRequest $request
      * @return mixed|null
      * @throws \NextDeveloper\Commons\Exceptions\CannotCreateModelException
      */
     public function update($testsId, TestsUpdateRequest $request)
     {
+        if($request->has('validateOnly') && $request->get('validateOnly') == true) {
+            return [
+                'validation'    =>  'success'
+            ];
+        }
+
         $model = TestsService::update($testsId, $request->validated());
 
         return ResponsableFactory::makeResponse($this, $model);
@@ -102,7 +144,6 @@ class TestsController extends AbstractController
      * This method updates Tests object on database.
      *
      * @param  $testsId
-     * @param  CountryCreateRequest $request
      * @return mixed|null
      * @throws \NextDeveloper\Commons\Exceptions\CannotCreateModelException
      */

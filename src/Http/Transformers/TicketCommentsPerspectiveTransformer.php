@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Cache;
 use NextDeveloper\Commons\Common\Cache\CacheHelper;
 use NextDeveloper\Support\Database\Models\TicketCommentsPerspective;
 use NextDeveloper\Support\Http\Transformers\AbstractTransformers\AbstractTicketCommentsPerspectiveTransformer;
+use NextDeveloper\Commons\Http\Transformers\AbstractTransformer;
 
 /**
  * Class TicketCommentsPerspectiveTransformer. This class is being used to manipulate the data we are serving to the customer

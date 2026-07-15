@@ -68,6 +68,8 @@ class AbstractTicketCommentsTransformer extends AbstractTransformer
             'created_at'  =>  $model->created_at,
             'updated_at'  =>  $model->updated_at,
             'deleted_at'  =>  $model->deleted_at,
+            'is_system_message'  =>  $model->is_system_message,
+            'is_internal'  =>  $model->is_internal,
             ]
         );
     }
@@ -156,12 +158,4 @@ class AbstractTicketCommentsTransformer extends AbstractTransformer
         return $this->collection($addresses, new AddressesTransformer());
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
-
-
-
-
-
-
-
-
 }

@@ -15,6 +15,8 @@ class TicketCommentsCreateRequest extends AbstractFormRequest
         return [
             'comment' => 'required|string',
         'support_ticket_id' => 'required|exists:support_tickets,uuid|uuid',
+        'is_system_message' => 'boolean',
+        'is_internal' => 'boolean',
         ];
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE

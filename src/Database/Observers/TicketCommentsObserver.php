@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use NextDeveloper\Commons\Exceptions\NotAllowedException;
 use NextDeveloper\Events\Services\Events;
 use NextDeveloper\IAM\Helpers\UserHelper;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * Class TicketCommentsObserver
@@ -57,7 +58,7 @@ class TicketCommentsObserver
     public function saving(Model $model)
     {
         throw_if(
-            !UserHelper::can('create', $model),
+            !UserHelper::can('save', $model),
             new NotAllowedException('You are not allowed to save this record')
         );
 

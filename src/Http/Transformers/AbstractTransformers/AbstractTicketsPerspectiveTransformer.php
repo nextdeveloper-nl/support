@@ -3,26 +3,30 @@
 namespace NextDeveloper\Support\Http\Transformers\AbstractTransformers;
 
 use NextDeveloper\Commons\Database\Models\Addresses;
+use NextDeveloper\Commons\Database\Models\AvailableActions;
+use NextDeveloper\Commons\Database\Models\Categories;
 use NextDeveloper\Commons\Database\Models\Comments;
+use NextDeveloper\Commons\Database\Models\Media;
 use NextDeveloper\Commons\Database\Models\Meta;
 use NextDeveloper\Commons\Database\Models\PhoneNumbers;
 use NextDeveloper\Commons\Database\Models\SocialMedia;
-use NextDeveloper\Commons\Database\Models\Votes;
-use NextDeveloper\Commons\Database\Models\Media;
-use NextDeveloper\Commons\Http\Transformers\MediaTransformer;
-use NextDeveloper\Commons\Database\Models\AvailableActions;
-use NextDeveloper\Commons\Http\Transformers\AvailableActionsTransformer;
 use NextDeveloper\Commons\Database\Models\States;
-use NextDeveloper\Commons\Http\Transformers\StatesTransformer;
-use NextDeveloper\Commons\Http\Transformers\CommentsTransformer;
-use NextDeveloper\Commons\Http\Transformers\SocialMediaTransformer;
-use NextDeveloper\Commons\Http\Transformers\MetaTransformer;
-use NextDeveloper\Commons\Http\Transformers\VotesTransformer;
-use NextDeveloper\Commons\Http\Transformers\AddressesTransformer;
-use NextDeveloper\Commons\Http\Transformers\PhoneNumbersTransformer;
-use NextDeveloper\Support\Database\Models\TicketsPerspective;
+use NextDeveloper\Commons\Database\Models\Votes;
 use NextDeveloper\Commons\Http\Transformers\AbstractTransformer;
+use NextDeveloper\Commons\Http\Transformers\AddressesTransformer;
+use NextDeveloper\Commons\Http\Transformers\AvailableActionsTransformer;
+use NextDeveloper\Commons\Http\Transformers\CommentsTransformer;
+use NextDeveloper\Commons\Http\Transformers\MediaTransformer;
+use NextDeveloper\Commons\Http\Transformers\MetaTransformer;
+use NextDeveloper\Commons\Http\Transformers\PhoneNumbersTransformer;
+use NextDeveloper\Commons\Http\Transformers\SocialMediaTransformer;
+use NextDeveloper\Commons\Http\Transformers\StatesTransformer;
+use NextDeveloper\Commons\Http\Transformers\VotesTransformer;
+use NextDeveloper\IAM\Database\Models\Accounts;
+use NextDeveloper\IAM\Database\Models\AccountTypes;
+use NextDeveloper\IAM\Database\Models\Users;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
+use NextDeveloper\Support\Database\Models\TicketsPerspective;
 
 /**
  * Class TicketsPerspectiveTransformer. This class is being used to manipulate the data we are serving to the customer
@@ -56,7 +60,9 @@ class AbstractTicketsPerspectiveTransformer extends AbstractTransformer
     {
                                                 $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
                                                             $iamUserId = \NextDeveloper\IAM\Database\Models\Users::where('id', $model->iam_user_id)->first();
-                                                            $supportSeekerAccountId = \NextDeveloper\Support\Database\Models\SeekerAccounts::where('id', $model->support_seeker_account_id)->first();
+                                                            $commonCategoryId = \NextDeveloper\Commons\Database\Models\Categories::where('id', $model->common_category_id)->first();
+                                                            $responsibleUserId = \NextDeveloper\IAM\Database\Models\Users::where('id', $model->responsible_user_id)->first();
+                                                            $supportSeekerAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->support_seeker_account_id)->first();
                                                             $iamAccountTypeId = \NextDeveloper\IAM\Database\Models\AccountTypes::where('id', $model->iam_account_type_id)->first();
                         
         return $this->buildPayload(
@@ -66,22 +72,38 @@ class AbstractTicketsPerspectiveTransformer extends AbstractTransformer
             'description'  =>  $model->description,
             'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,
             'iam_user_id'  =>  $iamUserId ? $iamUserId->uuid : null,
+            'tags'  =>  $model->tags,
+            'is_closed'  =>  $model->is_closed,
+            'is_public'  =>  $model->is_public,
+            'level'  =>  $model->level,
+            'priority'  =>  $model->priority,
+            'status'  =>  $model->status,
+            'common_category_id'  =>  $commonCategoryId ? $commonCategoryId->uuid : null,
+            'response_time'  =>  $model->response_time,
+            'first_response_at'  =>  $model->first_response_at,
+            'resolved_at'  =>  $model->resolved_at,
+            'sla_resolution_due_at'  =>  $model->sla_resolution_due_at,
+            'sla_response_breached'  =>  $model->sla_response_breached,
+            'sla_resolution_breached'  =>  $model->sla_resolution_breached,
+            'reopened_count'  =>  $model->reopened_count,
+            'is_first_contact_resolution'  =>  $model->is_first_contact_resolution,
+            'object_id'  =>  $model->object_id,
+            'object_type'  =>  $model->object_type,
+            'responsible_user_id'  =>  $responsibleUserId ? $responsibleUserId->uuid : null,
+            'time_spent'  =>  $model->time_spent,
+            'watcher_user_ids'  =>  $model->watcher_user_ids,
+            'watcher_account_ids'  =>  $model->watcher_account_ids,
+            'support_seeker_account_id'  =>  $supportSeekerAccountId ? $supportSeekerAccountId->uuid : null,
             'fullname'  =>  $model->fullname,
             'email'  =>  $model->email,
             'phone_number'  =>  $model->phone_number,
             'pronoun'  =>  $model->pronoun,
-            'priority'  =>  $model->priority,
-            'level'  =>  $model->level,
-            'is_closed'  =>  $model->is_closed,
-            'is_public'  =>  $model->is_public,
-            'response_time'  =>  $model->response_time,
-            'watcher_user_ids'  =>  $model->watcher_user_ids,
-            'watcher_account_ids'  =>  $model->watcher_account_ids,
-            'support_seeker_account_id'  =>  $supportSeekerAccountId ? $supportSeekerAccountId->uuid : null,
             'name'  =>  $model->name,
             'iam_account_type_id'  =>  $iamAccountTypeId ? $iamAccountTypeId->uuid : null,
-            'tags'  =>  $model->tags,
             'support_seeker_name'  =>  $model->support_seeker_name,
+            'responsible_name'  =>  $model->responsible_name,
+            'category_name'  =>  $model->category_name,
+            'csat_score'  =>  $model->csat_score,
             'created_at'  =>  $model->created_at,
             'updated_at'  =>  $model->updated_at,
             'deleted_at'  =>  $model->deleted_at,
