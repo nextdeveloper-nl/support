@@ -68,6 +68,10 @@ class TicketsService extends AbstractTicketsService
             AutoRouteTicket::dispatch($ticket);
         }
 
+        // Customer bug reports (tagged with config('support.bug_report_tag') in the
+        // main app) get auto-filed as a GitHub issue.
+        \App\Jobs\Support\CreateGithubIssueForCustomerBugReportJob::dispatch($ticket);
+
         return $ticket;
     }
 
