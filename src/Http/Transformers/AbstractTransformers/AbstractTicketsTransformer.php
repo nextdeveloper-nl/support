@@ -62,7 +62,7 @@ class AbstractTicketsTransformer extends AbstractTransformer
                                                             $responsibleUserId = \NextDeveloper\IAM\Database\Models\Users::where('id', $model->responsible_user_id)->first();
                                                             $supportSeekerAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->support_seeker_account_id)->first();
                                                             $commonCategoryId = \NextDeveloper\Commons\Database\Models\Categories::where('id', $model->common_category_id)->first();
-                        
+
         return $this->buildPayload(
             [
             'id'  =>  $model->uuid,

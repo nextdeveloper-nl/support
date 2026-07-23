@@ -17,13 +17,13 @@ class CsatsQueryFilter extends AbstractQueryFilter
      * @var Builder
      */
     protected $builder;
-    
+
     public function comment($value)
     {
         return $this->builder->where('comment', 'ilike', '%' . $value . '%');
     }
 
-    
+
     public function score($value)
     {
         $operator = substr($value, 0, 1);
@@ -37,7 +37,7 @@ class CsatsQueryFilter extends AbstractQueryFilter
         return $this->builder->where('score', $operator, $value);
     }
 
-    
+
     public function createdAtStart($date)
     {
         return $this->builder->where('created_at', '>=', $date);
@@ -118,7 +118,7 @@ class CsatsQueryFilter extends AbstractQueryFilter
     {
         return $this->supportTicket($value);
     }
-    
+
     public function iamAccountId($value)
     {
             $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('uuid', $value)->first();
@@ -128,7 +128,7 @@ class CsatsQueryFilter extends AbstractQueryFilter
         }
     }
 
-    
+
     public function iamUserId($value)
     {
             $iamUser = \NextDeveloper\IAM\Database\Models\Users::where('uuid', $value)->first();
@@ -138,6 +138,6 @@ class CsatsQueryFilter extends AbstractQueryFilter
         }
     }
 
-    
+
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 }

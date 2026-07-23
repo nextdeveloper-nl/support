@@ -20,31 +20,31 @@ class KbArticlesQueryFilter extends AbstractQueryFilter
      * @var Builder
      */
     protected $builder;
-    
+
     public function title($value)
     {
         return $this->builder->where('title', 'ilike', '%' . $value . '%');
     }
 
-        
+
     public function slug($value)
     {
         return $this->builder->where('slug', 'ilike', '%' . $value . '%');
     }
 
-        
+
     public function body($value)
     {
         return $this->builder->where('body', 'ilike', '%' . $value . '%');
     }
 
-        
+
     public function excerpt($value)
     {
         return $this->builder->where('excerpt', 'ilike', '%' . $value . '%');
     }
 
-    
+
     public function viewCount($value)
     {
         $operator = substr($value, 0, 1);
@@ -63,7 +63,7 @@ class KbArticlesQueryFilter extends AbstractQueryFilter
     {
         return $this->viewCount($value);
     }
-    
+
     public function helpfulCount($value)
     {
         $operator = substr($value, 0, 1);
@@ -82,7 +82,7 @@ class KbArticlesQueryFilter extends AbstractQueryFilter
     {
         return $this->helpfulCount($value);
     }
-    
+
     public function notHelpfulCount($value)
     {
         $operator = substr($value, 0, 1);
@@ -101,7 +101,7 @@ class KbArticlesQueryFilter extends AbstractQueryFilter
     {
         return $this->notHelpfulCount($value);
     }
-    
+
     public function isPublished($value)
     {
         return $this->builder->where('is_published', $value);
@@ -112,7 +112,7 @@ class KbArticlesQueryFilter extends AbstractQueryFilter
     {
         return $this->isPublished($value);
     }
-     
+
     public function createdAtStart($date)
     {
         return $this->builder->where('created_at', '>=', $date);
@@ -193,7 +193,7 @@ class KbArticlesQueryFilter extends AbstractQueryFilter
     {
         return $this->commonCategory($value);
     }
-    
+
     public function iamAccountId($value)
     {
             $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('uuid', $value)->first();
@@ -203,7 +203,7 @@ class KbArticlesQueryFilter extends AbstractQueryFilter
         }
     }
 
-    
+
     public function iamUserId($value)
     {
             $iamUser = \NextDeveloper\IAM\Database\Models\Users::where('uuid', $value)->first();
@@ -213,6 +213,6 @@ class KbArticlesQueryFilter extends AbstractQueryFilter
         }
     }
 
-    
+
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 }
