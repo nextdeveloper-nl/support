@@ -24,7 +24,7 @@ use NextDeveloper\Support\Database\Models\TicketAudits;
  */
 class AbstractTicketAuditsService
 {
-    public static function get(TicketAuditsQueryFilter $filter = null, array $params = []) : Collection|LengthAwarePaginator
+    public static function get(?TicketAuditsQueryFilter $filter = null, array $params = []) : Collection|LengthAwarePaginator
     {
         $enablePaginate = array_key_exists('paginate', $params);
 

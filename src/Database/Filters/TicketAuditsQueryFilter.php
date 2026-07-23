@@ -17,13 +17,13 @@ class TicketAuditsQueryFilter extends AbstractQueryFilter
      * @var Builder
      */
     protected $builder;
-    
+
     public function comments($value)
     {
         return $this->builder->where('comments', 'ilike', '%' . $value . '%');
     }
 
-    
+
     public function point($value)
     {
         $operator = substr($value, 0, 1);
@@ -37,7 +37,7 @@ class TicketAuditsQueryFilter extends AbstractQueryFilter
         return $this->builder->where('point', $operator, $value);
     }
 
-    
+
     public function createdAtStart($date)
     {
         return $this->builder->where('created_at', '>=', $date);
@@ -113,6 +113,6 @@ class TicketAuditsQueryFilter extends AbstractQueryFilter
         }
     }
 
-    
+
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 }

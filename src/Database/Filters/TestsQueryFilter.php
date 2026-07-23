@@ -17,19 +17,19 @@ class TestsQueryFilter extends AbstractQueryFilter
      * @var Builder
      */
     protected $builder;
-    
+
     public function name($value)
     {
         return $this->builder->where('name', 'ilike', '%' . $value . '%');
     }
 
-        
+
     public function result($value)
     {
         return $this->builder->where('result', 'ilike', '%' . $value . '%');
     }
 
-    
+
     public function isPassed($value)
     {
         return $this->builder->where('is_passed', $value);
@@ -40,7 +40,7 @@ class TestsQueryFilter extends AbstractQueryFilter
     {
         return $this->isPassed($value);
     }
-     
+
     public function createdAtStart($date)
     {
         return $this->builder->where('created_at', '>=', $date);
@@ -121,7 +121,7 @@ class TestsQueryFilter extends AbstractQueryFilter
     {
         return $this->supportTicket($value);
     }
-    
+
     public function commonActionId($value)
     {
             $commonAction = \NextDeveloper\Commons\Database\Models\Actions::where('uuid', $value)->first();
@@ -136,6 +136,6 @@ class TestsQueryFilter extends AbstractQueryFilter
     {
         return $this->commonAction($value);
     }
-    
+
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 }

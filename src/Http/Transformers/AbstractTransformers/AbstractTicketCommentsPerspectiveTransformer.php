@@ -58,7 +58,7 @@ class AbstractTicketCommentsPerspectiveTransformer extends AbstractTransformer
                                                             $iamUserId = \NextDeveloper\IAM\Database\Models\Users::where('id', $model->iam_user_id)->first();
                                                             $iamAccountTypeId = \NextDeveloper\IAM\Database\Models\AccountTypes::where('id', $model->iam_account_type_id)->first();
                                                             $supportTicketId = \NextDeveloper\Support\Database\Models\Tickets::where('id', $model->support_ticket_id)->first();
-                        
+
         return $this->buildPayload(
             [
             'id'  =>  $model->uuid,

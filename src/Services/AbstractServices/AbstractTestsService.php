@@ -23,7 +23,7 @@ use NextDeveloper\Support\Database\Models\Tests;
  */
 class AbstractTestsService
 {
-    public static function get(TestsQueryFilter $filter = null, array $params = []) : Collection|LengthAwarePaginator
+    public static function get(?TestsQueryFilter $filter = null, array $params = []) : Collection|LengthAwarePaginator
     {
         $enablePaginate = array_key_exists('paginate', $params);
 

@@ -23,7 +23,7 @@ use NextDeveloper\Support\Database\Models\TicketComments;
  */
 class AbstractTicketCommentsService
 {
-    public static function get(TicketCommentsQueryFilter $filter = null, array $params = []) : Collection|LengthAwarePaginator
+    public static function get(?TicketCommentsQueryFilter $filter = null, array $params = []) : Collection|LengthAwarePaginator
     {
         $enablePaginate = array_key_exists('paginate', $params);
 
