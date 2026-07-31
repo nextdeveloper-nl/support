@@ -210,17 +210,17 @@ class Tickets extends Model
     {
         return $this->belongsTo(\NextDeveloper\Commons\Database\Models\Categories::class);
     }
-    
+
     public function accounts() : \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(\NextDeveloper\IAM\Database\Models\Accounts::class);
     }
-    
+
     public function users() : \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(\NextDeveloper\IAM\Database\Models\Users::class);
     }
-    
+
     public function csats() : \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(\NextDeveloper\Support\Database\Models\Csats::class);

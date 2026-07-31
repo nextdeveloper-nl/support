@@ -17,25 +17,25 @@ class TicketCommentsPerspectiveQueryFilter extends AbstractQueryFilter
      * @var Builder
      */
     protected $builder;
-    
+
     public function comment($value)
     {
         return $this->builder->where('comment', 'ilike', '%' . $value . '%');
     }
 
-        
+
     public function fullname($value)
     {
         return $this->builder->where('fullname', 'ilike', '%' . $value . '%');
     }
 
-        
+
     public function email($value)
     {
         return $this->builder->where('email', 'ilike', '%' . $value . '%');
     }
 
-        
+
     public function phoneNumber($value)
     {
         return $this->builder->where('phone_number', 'ilike', '%' . $value . '%');
@@ -46,19 +46,19 @@ class TicketCommentsPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->phoneNumber($value);
     }
-        
+
     public function pronoun($value)
     {
         return $this->builder->where('pronoun', 'ilike', '%' . $value . '%');
     }
 
-        
+
     public function name($value)
     {
         return $this->builder->where('name', 'ilike', '%' . $value . '%');
     }
 
-    
+
     public function createdAtStart($date)
     {
         return $this->builder->where('created_at', '>=', $date);
@@ -134,7 +134,7 @@ class TicketCommentsPerspectiveQueryFilter extends AbstractQueryFilter
         }
     }
 
-    
+
     public function iamUserId($value)
     {
             $iamUser = \NextDeveloper\IAM\Database\Models\Users::where('uuid', $value)->first();
@@ -144,7 +144,7 @@ class TicketCommentsPerspectiveQueryFilter extends AbstractQueryFilter
         }
     }
 
-    
+
     public function iamAccountTypeId($value)
     {
             $iamAccountType = \NextDeveloper\IAM\Database\Models\AccountTypes::where('uuid', $value)->first();
@@ -159,7 +159,7 @@ class TicketCommentsPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->iamAccountType($value);
     }
-    
+
     public function supportTicketId($value)
     {
             $supportTicket = \NextDeveloper\Support\Database\Models\Tickets::where('uuid', $value)->first();
@@ -174,6 +174,6 @@ class TicketCommentsPerspectiveQueryFilter extends AbstractQueryFilter
     {
         return $this->supportTicket($value);
     }
-    
+
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 }

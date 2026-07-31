@@ -40,19 +40,19 @@ class TicketsQueryFilter extends AbstractQueryFilter
      * @var Builder
      */
     protected $builder;
-    
+
     public function title($value)
     {
         return $this->builder->where('title', 'ilike', '%' . $value . '%');
     }
 
-        
+
     public function description($value)
     {
         return $this->builder->where('description', 'ilike', '%' . $value . '%');
     }
 
-        
+
     public function objectType($value)
     {
         return $this->builder->where('object_type', 'ilike', '%' . $value . '%');
@@ -63,13 +63,13 @@ class TicketsQueryFilter extends AbstractQueryFilter
     {
         return $this->objectType($value);
     }
-        
+
     public function status($value)
     {
         return $this->builder->where('status', 'ilike', '%' . $value . '%');
     }
 
-    
+
     public function level($value)
     {
         $operator = substr($value, 0, 1);
@@ -83,7 +83,7 @@ class TicketsQueryFilter extends AbstractQueryFilter
         return $this->builder->where('level', $operator, $value);
     }
 
-    
+
     public function priority($value)
     {
         $operator = substr($value, 0, 1);
@@ -97,7 +97,7 @@ class TicketsQueryFilter extends AbstractQueryFilter
         return $this->builder->where('priority', $operator, $value);
     }
 
-    
+
     public function timeSpent($value)
     {
         $operator = substr($value, 0, 1);
@@ -116,7 +116,7 @@ class TicketsQueryFilter extends AbstractQueryFilter
     {
         return $this->timeSpent($value);
     }
-    
+
     public function reopenedCount($value)
     {
         $operator = substr($value, 0, 1);
@@ -135,7 +135,7 @@ class TicketsQueryFilter extends AbstractQueryFilter
     {
         return $this->reopenedCount($value);
     }
-    
+
     public function isClosed($value)
     {
         return $this->builder->where('is_closed', $value);
@@ -146,7 +146,7 @@ class TicketsQueryFilter extends AbstractQueryFilter
     {
         return $this->isClosed($value);
     }
-     
+
     public function isPublic($value)
     {
         return $this->builder->where('is_public', $value);
@@ -157,7 +157,7 @@ class TicketsQueryFilter extends AbstractQueryFilter
     {
         return $this->isPublic($value);
     }
-     
+
     public function isFirstContactResolution($value)
     {
         return $this->builder->where('is_first_contact_resolution', $value);
@@ -168,7 +168,7 @@ class TicketsQueryFilter extends AbstractQueryFilter
     {
         return $this->isFirstContactResolution($value);
     }
-     
+
     public function responseTimeStart($date)
     {
         return $this->builder->where('response_time', '>=', $date);
@@ -332,7 +332,7 @@ class TicketsQueryFilter extends AbstractQueryFilter
         }
     }
 
-    
+
     public function iamUserId($value)
     {
             $iamUser = \NextDeveloper\IAM\Database\Models\Users::where('uuid', $value)->first();
@@ -342,7 +342,7 @@ class TicketsQueryFilter extends AbstractQueryFilter
         }
     }
 
-    
+
     public function responsibleUserId($value)
     {
             $responsibleUser = \NextDeveloper\IAM\Database\Models\Users::where('uuid', $value)->first();
@@ -357,7 +357,7 @@ class TicketsQueryFilter extends AbstractQueryFilter
     {
         return $this->responsibleUser($value);
     }
-    
+
     public function supportSeekerAccountId($value)
     {
             $supportSeekerAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('uuid', $value)->first();
@@ -372,7 +372,7 @@ class TicketsQueryFilter extends AbstractQueryFilter
     {
         return $this->supportSeekerAccount($value);
     }
-    
+
     public function commonCategoryId($value)
     {
             $commonCategory = \NextDeveloper\Commons\Database\Models\Categories::where('uuid', $value)->first();
@@ -387,6 +387,6 @@ class TicketsQueryFilter extends AbstractQueryFilter
     {
         return $this->commonCategory($value);
     }
-    
+
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 }

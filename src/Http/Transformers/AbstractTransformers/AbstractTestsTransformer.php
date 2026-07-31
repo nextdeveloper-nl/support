@@ -56,7 +56,7 @@ class AbstractTestsTransformer extends AbstractTransformer
     {
                                                 $supportTicketId = \NextDeveloper\Support\Database\Models\Tickets::where('id', $model->support_ticket_id)->first();
                                                             $commonActionId = \NextDeveloper\Commons\Database\Models\Actions::where('id', $model->common_action_id)->first();
-                        
+
         return $this->buildPayload(
             [
             'id'  =>  $model->uuid,

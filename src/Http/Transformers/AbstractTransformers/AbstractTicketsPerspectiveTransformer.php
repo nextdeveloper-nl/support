@@ -64,7 +64,7 @@ class AbstractTicketsPerspectiveTransformer extends AbstractTransformer
                                                             $responsibleUserId = \NextDeveloper\IAM\Database\Models\Users::where('id', $model->responsible_user_id)->first();
                                                             $supportSeekerAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->support_seeker_account_id)->first();
                                                             $iamAccountTypeId = \NextDeveloper\IAM\Database\Models\AccountTypes::where('id', $model->iam_account_type_id)->first();
-                        
+
         return $this->buildPayload(
             [
             'id'  =>  $model->uuid,

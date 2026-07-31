@@ -53,7 +53,15 @@ class TicketsService extends AbstractTicketsService
 
         $data = self::normalizeCategory($data);
 
-        return parent::update($id, $data);
+        $ticket = parent::update($id, $data);
+
+        // A tag can be added after creation too (e.g. an agent re-tags an existing
+        // ticket as a bug report) - the job self-guards on tag presence and on
+        // already having filed, so it's safe to dispatch unconditionally here as
+        // well, mirroring create() below.
+        \App\Jobs\Support\CreateGithubIssueForCustomerBugReportJob::dispatch($ticket);
+
+        return $ticket;
     }
 
     public static function create(array $data)

@@ -17,13 +17,13 @@ class TicketCommentsQueryFilter extends AbstractQueryFilter
      * @var Builder
      */
     protected $builder;
-    
+
     public function comment($value)
     {
         return $this->builder->where('comment', 'ilike', '%' . $value . '%');
     }
 
-    
+
     public function isSystemMessage($value)
     {
         return $this->builder->where('is_system_message', $value);
@@ -34,7 +34,7 @@ class TicketCommentsQueryFilter extends AbstractQueryFilter
     {
         return $this->isSystemMessage($value);
     }
-     
+
     public function isInternal($value)
     {
         return $this->builder->where('is_internal', $value);
@@ -45,7 +45,7 @@ class TicketCommentsQueryFilter extends AbstractQueryFilter
     {
         return $this->isInternal($value);
     }
-     
+
     public function createdAtStart($date)
     {
         return $this->builder->where('created_at', '>=', $date);
@@ -121,7 +121,7 @@ class TicketCommentsQueryFilter extends AbstractQueryFilter
         }
     }
 
-    
+
     public function iamUserId($value)
     {
             $iamUser = \NextDeveloper\IAM\Database\Models\Users::where('uuid', $value)->first();
@@ -131,7 +131,7 @@ class TicketCommentsQueryFilter extends AbstractQueryFilter
         }
     }
 
-    
+
     public function supportTicketId($value)
     {
             $supportTicket = \NextDeveloper\Support\Database\Models\Tickets::where('uuid', $value)->first();
@@ -146,6 +146,6 @@ class TicketCommentsQueryFilter extends AbstractQueryFilter
     {
         return $this->supportTicket($value);
     }
-    
+
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 }

@@ -17,13 +17,13 @@ class SlaPoliciesQueryFilter extends AbstractQueryFilter
      * @var Builder
      */
     protected $builder;
-    
+
     public function name($value)
     {
         return $this->builder->where('name', 'ilike', '%' . $value . '%');
     }
 
-    
+
     public function priority($value)
     {
         $operator = substr($value, 0, 1);
@@ -37,7 +37,7 @@ class SlaPoliciesQueryFilter extends AbstractQueryFilter
         return $this->builder->where('priority', $operator, $value);
     }
 
-    
+
     public function responseTargetMinutes($value)
     {
         $operator = substr($value, 0, 1);
@@ -56,7 +56,7 @@ class SlaPoliciesQueryFilter extends AbstractQueryFilter
     {
         return $this->responseTargetMinutes($value);
     }
-    
+
     public function resolutionTargetMinutes($value)
     {
         $operator = substr($value, 0, 1);
@@ -75,7 +75,7 @@ class SlaPoliciesQueryFilter extends AbstractQueryFilter
     {
         return $this->resolutionTargetMinutes($value);
     }
-    
+
     public function isActive($value)
     {
         return $this->builder->where('is_active', $value);
@@ -86,7 +86,7 @@ class SlaPoliciesQueryFilter extends AbstractQueryFilter
     {
         return $this->isActive($value);
     }
-     
+
     public function createdAtStart($date)
     {
         return $this->builder->where('created_at', '>=', $date);
@@ -162,7 +162,7 @@ class SlaPoliciesQueryFilter extends AbstractQueryFilter
         }
     }
 
-    
+
     public function iamUserId($value)
     {
             $iamUser = \NextDeveloper\IAM\Database\Models\Users::where('uuid', $value)->first();
@@ -172,6 +172,6 @@ class SlaPoliciesQueryFilter extends AbstractQueryFilter
         }
     }
 
-    
+
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 }
