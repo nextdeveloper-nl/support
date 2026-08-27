@@ -60,11 +60,22 @@ class TicketsController extends AbstractController
      */
     public function doAction($objectId, $action)
     {
-        $actionId = TicketsService::doAction($objectId, $action, request()->all());
+        $result = TicketsService::doAction($objectId, $action, request()->all());
+
+        //  Lifecycle actions (status/assignment/routing/escalation) run synchronously and
+        //  answer with their outcome; anything still queued answers with its action id.
+        if (is_array($result)) {
+            return $this->withArray(
+                [
+                'status'    =>  $result['status'] ?? 'success',
+                'message'   =>  $result['message'] ?? null
+                ]
+            );
+        }
 
         return $this->withArray(
             [
-            'action_id' =>  $actionId
+            'action_id' =>  $result
             ]
         );
     }
