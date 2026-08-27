@@ -8,8 +8,8 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use NextDeveloper\IAM\Helpers\UserHelper;
-use NextDeveloper\Support\Actions\Tickets\EscalateOnSlaBreach;
 use NextDeveloper\Support\Database\Models\Tickets;
+use NextDeveloper\Support\Services\TicketWorkflowService;
 
 /**
  * Detects tickets that have breached their response or resolution SLA and escalates
@@ -76,7 +76,7 @@ class CheckTicketSlaBreachesJob implements ShouldQueue
 
             $type = array_key_exists('sla_resolution_breached', $flags) ? 'resolution' : 'response';
 
-            EscalateOnSlaBreach::dispatch($ticket->fresh(), ['type' => $type]);
+            TicketWorkflowService::escalateOnSlaBreach($ticket->fresh(), $type);
         }
     }
 }

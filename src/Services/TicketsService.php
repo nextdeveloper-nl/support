@@ -6,7 +6,6 @@ use NextDeveloper\Commons\Helpers\DatabaseHelper;
 use NextDeveloper\IAM\Database\Models\Accounts;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 use NextDeveloper\IAM\Helpers\UserHelper;
-use NextDeveloper\Support\Actions\Tickets\AutoRouteTicket;
 use NextDeveloper\Support\Database\Models\SlaPolicies;
 use NextDeveloper\Support\Database\Models\Tickets;
 use NextDeveloper\Support\Services\AbstractServices\AbstractTicketsService;
@@ -73,7 +72,7 @@ class TicketsService extends AbstractTicketsService
         $ticket = parent::create($data);
 
         if ($ticket->common_category_id) {
-            AutoRouteTicket::dispatch($ticket);
+            TicketWorkflowService::autoRoute($ticket);
         }
 
         // Customer bug reports (tagged with config('support.bug_report_tag') in the
@@ -81,6 +80,50 @@ class TicketsService extends AbstractTicketsService
         \App\Jobs\Support\CreateGithubIssueForCustomerBugReportJob::dispatch($ticket);
 
         return $ticket;
+    }
+
+    /**
+     * Ticket lifecycle operations run synchronously instead of being queued as Actions:
+     * an agent flipping a status waited on a worker before the change became visible.
+     * Everything here is a short database write plus an event fire, so it belongs in the
+     * request. Unknown actions still fall through to the generated (queued) dispatcher.
+     *
+     * @param  string  $objectId  ticket uuid
+     * @param  string  $action  action slug, e.g. change-status
+     * @return array<string, mixed>|string|null
+     */
+    public static function doAction($objectId, $action, ...$params)
+    {
+        $handlers = ['change-status', 'assign-ticket', 'unassign-ticket', 'auto-route-ticket', 'escalate-on-sla-breach'];
+
+        if (! in_array($action, $handlers, true)) {
+            return parent::doAction($objectId, $action, ...$params);
+        }
+
+        //  Scoped lookup on purpose: the caller may only act on a ticket they can already
+        //  see, exactly as the generated (queued) dispatcher did.
+        $ticket = Tickets::where('uuid', $objectId)->first();
+
+        if (! $ticket) {
+            return [
+                'status' => 'error',
+                'message' => 'Ticket not found.',
+            ];
+        }
+
+        $payload = $params[0] ?? [];
+
+        if (! is_array($payload)) {
+            $payload = [];
+        }
+
+        return match ($action) {
+            'change-status' => TicketWorkflowService::changeStatus($ticket, $payload['status'] ?? null),
+            'assign-ticket' => TicketWorkflowService::assign($ticket, $payload['iam_user_id'] ?? null),
+            'unassign-ticket' => TicketWorkflowService::unassign($ticket),
+            'auto-route-ticket' => TicketWorkflowService::autoRoute($ticket),
+            'escalate-on-sla-breach' => TicketWorkflowService::escalateOnSlaBreach($ticket, $payload['type'] ?? null),
+        };
     }
 
     /**
