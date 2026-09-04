@@ -26,6 +26,8 @@ use NextDeveloper\Commons\Database\Traits\HasObject;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon $deleted_at
+ * @property integer $support_ticket_id
+ * @property integer $iam_account_id
  */
 class TicketAudits extends Model
 {
@@ -46,6 +48,8 @@ class TicketAudits extends Model
             'comments',
             'iam_user_id',
             'point',
+            'support_ticket_id',
+            'iam_account_id',
     ];
 
     /**
@@ -74,6 +78,8 @@ class TicketAudits extends Model
     'created_at' => 'datetime',
     'updated_at' => 'datetime',
     'deleted_at' => 'datetime',
+    'support_ticket_id' => 'integer',
+    'iam_account_id' => 'integer',
     ];
 
     /**

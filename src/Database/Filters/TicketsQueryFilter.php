@@ -388,5 +388,14 @@ class TicketsQueryFilter extends AbstractQueryFilter
         return $this->commonCategory($value);
     }
 
+    public function resolvedByUserId($value)
+    {
+            $resolvedByUser = \NextDeveloper\IAM\Database\Models\Users::where('uuid', $value)->first();
+
+        if($resolvedByUser) {
+            return $this->builder->where('resolved_by_user_id', '=', $resolvedByUser->id);
+        }
+    }
+
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 }
