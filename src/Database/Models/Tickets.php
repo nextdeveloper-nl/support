@@ -132,8 +132,8 @@ class Tickets extends Model
     'is_public' => 'boolean',
     'responsible_user_id' => 'integer',
     'time_spent' => 'integer',
-    'watcher_user_ids' => 'array:integer',
-    'watcher_account_ids' => 'array:integer',
+    'watcher_user_ids' => \NextDeveloper\Commons\Database\Casts\IntegerArray::class,
+    'watcher_account_ids' => \NextDeveloper\Commons\Database\Casts\IntegerArray::class,
     'support_seeker_account_id' => 'integer',
     'status' => 'string',
     'common_category_id' => 'integer',
@@ -181,10 +181,23 @@ class Tickets extends Model
     {
         parent::boot();
 
-        //  We create and add Observer even if we wont use it.
-        parent::observe(TicketsObserver::class);
-
         self::registerScopes();
+    }
+
+    /**
+     * Registers the observer once the model has finished booting.
+     *
+     * Registering it inside boot() instantiates the model while it is still booting,
+     * which Laravel 12+ rejects with a LogicException.
+     *
+     * @return void
+     */
+    protected static function booted()
+    {
+        parent::booted();
+
+        //  We create and add Observer even if we wont use it.
+        static::observe(TicketsObserver::class);
     }
 
     public static function registerScopes()
