@@ -49,6 +49,7 @@ use NextDeveloper\Commons\Database\Traits\HasObject;
  * @property \Carbon\Carbon $sla_resolution_due_at
  * @property boolean $sla_response_breached
  * @property boolean $sla_resolution_breached
+ * @property integer $resolved_by_user_id
  */
 class Tickets extends Model
 {
@@ -92,6 +93,7 @@ class Tickets extends Model
             'sla_resolution_due_at',
             'sla_response_breached',
             'sla_resolution_breached',
+            'resolved_by_user_id',
     ];
 
     /**
@@ -142,6 +144,7 @@ class Tickets extends Model
     'sla_resolution_due_at' => 'datetime',
     'sla_response_breached' => 'boolean',
     'sla_resolution_breached' => 'boolean',
+    'resolved_by_user_id' => 'integer',
     ];
 
     /**

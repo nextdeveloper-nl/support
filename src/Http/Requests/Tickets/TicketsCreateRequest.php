@@ -33,6 +33,7 @@ class TicketsCreateRequest extends AbstractFormRequest
         'sla_resolution_due_at' => 'nullable|date',
         'sla_response_breached' => 'boolean',
         'sla_resolution_breached' => 'boolean',
+        'resolved_by_user_id' => 'nullable|exists:iam_users,uuid|uuid',
         ];
     }
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE

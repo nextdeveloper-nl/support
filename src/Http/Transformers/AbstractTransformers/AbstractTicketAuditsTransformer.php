@@ -55,6 +55,8 @@ class AbstractTicketAuditsTransformer extends AbstractTransformer
     public function transform(TicketAudits $model)
     {
                                                 $iamUserId = \NextDeveloper\IAM\Database\Models\Users::where('id', $model->iam_user_id)->first();
+                                                            $supportTicketId = \NextDeveloper\Support\Database\Models\Tickets::where('id', $model->support_ticket_id)->first();
+                                                            $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
 
         return $this->buildPayload(
             [
@@ -65,6 +67,8 @@ class AbstractTicketAuditsTransformer extends AbstractTransformer
             'created_at'  =>  $model->created_at,
             'updated_at'  =>  $model->updated_at,
             'deleted_at'  =>  $model->deleted_at,
+            'support_ticket_id'  =>  $supportTicketId ? $supportTicketId->uuid : null,
+            'iam_account_id'  =>  $iamAccountId ? $iamAccountId->uuid : null,
             ]
         );
     }

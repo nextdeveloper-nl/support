@@ -60,6 +60,7 @@ class AbstractTicketsTransformer extends AbstractTransformer
                                                 $iamAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->iam_account_id)->first();
                                                             $iamUserId = \NextDeveloper\IAM\Database\Models\Users::where('id', $model->iam_user_id)->first();
                                                             $responsibleUserId = \NextDeveloper\IAM\Database\Models\Users::where('id', $model->responsible_user_id)->first();
+                                                            $resolvedByUserId = \NextDeveloper\IAM\Database\Models\Users::where('id', $model->resolved_by_user_id)->first();
                                                             $supportSeekerAccountId = \NextDeveloper\IAM\Database\Models\Accounts::where('id', $model->support_seeker_account_id)->first();
                                                             $commonCategoryId = \NextDeveloper\Commons\Database\Models\Categories::where('id', $model->common_category_id)->first();
 
@@ -95,6 +96,7 @@ class AbstractTicketsTransformer extends AbstractTransformer
             'sla_resolution_due_at'  =>  $model->sla_resolution_due_at,
             'sla_response_breached'  =>  $model->sla_response_breached,
             'sla_resolution_breached'  =>  $model->sla_resolution_breached,
+            'resolved_by_user_id'  =>  $resolvedByUserId ? $resolvedByUserId->uuid : null,
             ]
         );
     }
