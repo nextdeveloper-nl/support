@@ -114,5 +114,14 @@ class TicketAuditsQueryFilter extends AbstractQueryFilter
     }
 
 
+    public function supportTicketId($value)
+    {
+            $supportTicket = \NextDeveloper\Support\Database\Models\Tickets::where('uuid', $value)->first();
+
+        if($supportTicket) {
+            return $this->builder->where('support_ticket_id', '=', $supportTicket->id);
+        }
+    }
+
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
 }

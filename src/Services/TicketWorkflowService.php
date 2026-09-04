@@ -245,13 +245,17 @@ class TicketWorkflowService
         $actorId = $actorId ?? $ticket->iam_user_id;
 
         try {
-            UserHelper::runAsAdmin(function () use ($old, $new, $actorId): void {
+            UserHelper::runAsAdmin(function () use ($ticket, $old, $new, $actorId): void {
                 UserHelper::bypassRolesCheck(true);
 
                 try {
+                    //  iam_account_id is set from the ticket, not left to the observer: inside
+                    //  runAsAdmin the current account is the admin's, not the ticket owner's.
                     TicketAudits::create([
+                        'support_ticket_id' => $ticket->id,
                         'comments' => 'Status changed from '.$old.' to '.$new,
                         'iam_user_id' => $actorId,
+                        'iam_account_id' => $ticket->iam_account_id,
                         'point' => 0,
                     ]);
                 } finally {
