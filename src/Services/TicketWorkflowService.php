@@ -3,6 +3,7 @@
 namespace NextDeveloper\Support\Services;
 
 use NextDeveloper\Commons\Common\Cache\CacheHelper;
+use NextDeveloper\Commons\Helpers\DatabaseHelper;
 use NextDeveloper\Events\Services\Events;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 use NextDeveloper\IAM\Helpers\UserHelper;
@@ -29,7 +30,8 @@ class TicketWorkflowService
 
     /**
      * Moves a ticket through its lifecycle and keeps the derived columns consistent:
-     *  - resolved/closed stamp resolved_at and is_closed
+     *  - resolved/closed stamp resolved_at, resolved_by_user_id (the caller) and is_closed
+     *  - the first move to pending stamps first_response_at
      *  - re-opening a resolved/closed ticket increments reopened_count and clears resolution
      *  - first-contact-resolution is flagged when a ticket is resolved without ever re-opening
      *
@@ -59,8 +61,16 @@ class TicketWorkflowService
         $wasClosed = in_array($old, self::CLOSED_STATUSES, true);
         $isClosing = in_array($new, self::CLOSED_STATUSES, true);
 
+        //  Captured before privilegedUpdate() elevates: inside runAsAdmin, me() is the admin.
+        $actorId = UserHelper::me() ? UserHelper::me()->id : null;
+
         if ($isClosing && ! $wasClosed) {
             $data['resolved_at'] = $ticket->resolved_at ?? now();
+
+            if (self::recordsResolver()) {
+                $data['resolved_by_user_id'] = $actorId;
+            }
+
             $data['is_closed'] = $new === 'closed';
             $data['is_first_contact_resolution'] = (int) $ticket->reopened_count === 0;
         }
@@ -68,6 +78,11 @@ class TicketWorkflowService
         if ($wasClosed && ! $isClosing) {
             $data['reopened_count'] = (int) $ticket->reopened_count + 1;
             $data['resolved_at'] = null;
+
+            if (self::recordsResolver()) {
+                $data['resolved_by_user_id'] = null;
+            }
+
             $data['is_closed'] = false;
             $data['is_first_contact_resolution'] = false;
         }
@@ -76,7 +91,10 @@ class TicketWorkflowService
             $data['is_closed'] = false;
         }
 
-        $actorId = UserHelper::me() ? UserHelper::me()->id : null;
+        //  Work starts when a ticket first goes to pending; later round trips keep the first stamp.
+        if ($new === 'pending' && ! $ticket->first_response_at) {
+            $data['first_response_at'] = now();
+        }
 
         TicketsService::privilegedUpdate($ticket, $data);
 
@@ -207,9 +225,27 @@ class TicketWorkflowService
         return self::success('Ticket escalated to priority '.$newPriority.' on SLA breach', $fresh);
     }
 
+    /**
+     * resolved_by_user_id was added to support_tickets after the table existed; a database that has
+     * not been given the column keeps working, just without the stamp.
+     */
+    private static function recordsResolver(): bool
+    {
+        return DatabaseHelper::isColumnExists('support_tickets', 'resolved_by_user_id');
+    }
+
+    /**
+     * Whether the caller holds one of the roles configured to work tickets (support.workflow.agent_roles).
+     */
     private static function isAgent(): bool
     {
-        return UserHelper::hasRole('support-admin') || UserHelper::hasRole('support-specialist');
+        foreach ((array) config('support.workflow.agent_roles', ['support-admin', 'support-specialist']) as $role) {
+            if (UserHelper::hasRole($role)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

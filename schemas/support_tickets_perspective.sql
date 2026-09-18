@@ -42,12 +42,17 @@ SELECT t.id,
     cs.score AS csat_score,
     t.created_at,
     t.updated_at,
-    t.deleted_at
+    t.deleted_at,
+    -- Appended, not inserted: CREATE OR REPLACE VIEW can only add columns at the end.
+    t.resolved_by_user_id,
+    rbu.fullname AS resolved_by_name,
+    t.kind
    FROM support_tickets t
      LEFT JOIN iam_users u ON u.id = t.iam_user_id
      LEFT JOIN iam_accounts a ON a.id = t.iam_account_id
      LEFT JOIN iam_accounts sa ON sa.id = t.support_seeker_account_id
      LEFT JOIN iam_users ru ON ru.id = t.responsible_user_id
+     LEFT JOIN iam_users rbu ON rbu.id = t.resolved_by_user_id
      LEFT JOIN common_categories cc ON cc.id = t.common_category_id
      LEFT JOIN LATERAL ( SELECT c.score
            FROM support_csats c

@@ -4,6 +4,7 @@ namespace NextDeveloper\Support\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
+use NextDeveloper\Commons\Database\Filters\FilterClauses;
 use NextDeveloper\Commons\Database\Models\Categories;
 use NextDeveloper\IAM\Database\Models\Accounts;
 use NextDeveloper\IAM\Database\Models\Users;
@@ -23,17 +24,7 @@ class TicketsQueryFilter extends AbstractQueryFilter
      */
     public function tags($values)
     {
-        $tags = explode(',', $values);
-
-        $search = '';
-
-        for($i = 0; $i < count($tags); $i++) {
-            $search .= "'" . trim($tags[$i]) . "',";
-        }
-
-        $search = substr($search, 0, -1);
-
-        return $this->builder->whereRaw('tags @> ARRAY[' . $search . ']');
+        return FilterClauses::tags($this->builder, $values);
     }
 
     /**
@@ -55,7 +46,36 @@ class TicketsQueryFilter extends AbstractQueryFilter
 
     public function objectType($value)
     {
-        return $this->builder->where('object_type', 'ilike', '%' . $value . '%');
+        return FilterClauses::objectType($this->builder, $value);
+    }
+
+    /**
+     * Tickets opened on one of these records (comma separated uuids of the object_type sent along).
+     */
+    public function objectId($value)
+    {
+        return FilterClauses::objectId(
+            $this->builder,
+            $this->request->get('object_type', $this->request->get('objectType')),
+            $value
+        );
+    }
+
+    //  This is an alias function of objectId
+    public function object_id($value)
+    {
+        return $this->objectId($value);
+    }
+
+    /**
+     * One or more kinds, comma separated (fixlean: error_card, urgent_call, suggestion).
+     */
+    public function kind($value)
+    {
+        return $this->builder->whereIn(
+            $this->builder->getModel()->qualifyColumn('kind'),
+            array_values(array_filter(array_map('trim', explode(',', (string) $value))))
+        );
     }
 
         //  This is an alias function of objectType
@@ -325,76 +345,70 @@ class TicketsQueryFilter extends AbstractQueryFilter
 
     public function iamAccountId($value)
     {
-            $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('uuid', $value)->first();
+        return FilterClauses::linkedId($this->builder, 'iam_account_id', \NextDeveloper\IAM\Database\Models\Accounts::class, $value);
+    }
 
-        if($iamAccount) {
-            return $this->builder->where('iam_account_id', '=', $iamAccount->id);
-        }
+    //  This is an alias function of iamAccountId
+    public function iam_account_id($value)
+    {
+        return $this->iamAccountId($value);
     }
 
 
     public function iamUserId($value)
     {
-            $iamUser = \NextDeveloper\IAM\Database\Models\Users::where('uuid', $value)->first();
+        return FilterClauses::linkedId($this->builder, 'iam_user_id', \NextDeveloper\IAM\Database\Models\Users::class, $value);
+    }
 
-        if($iamUser) {
-            return $this->builder->where('iam_user_id', '=', $iamUser->id);
-        }
+    //  This is an alias function of iamUserId
+    public function iam_user_id($value)
+    {
+        return $this->iamUserId($value);
     }
 
 
     public function responsibleUserId($value)
     {
-            $responsibleUser = \NextDeveloper\IAM\Database\Models\Users::where('uuid', $value)->first();
-
-        if($responsibleUser) {
-            return $this->builder->where('responsible_user_id', '=', $responsibleUser->id);
-        }
+        return FilterClauses::linkedId($this->builder, 'responsible_user_id', \NextDeveloper\IAM\Database\Models\Users::class, $value);
     }
 
         //  This is an alias function of responsibleUser
     public function responsible_user_id($value)
     {
-        return $this->responsibleUser($value);
+        return $this->responsibleUserId($value);
     }
 
     public function supportSeekerAccountId($value)
     {
-            $supportSeekerAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('uuid', $value)->first();
-
-        if($supportSeekerAccount) {
-            return $this->builder->where('support_seeker_account_id', '=', $supportSeekerAccount->id);
-        }
+        return FilterClauses::linkedId($this->builder, 'support_seeker_account_id', \NextDeveloper\IAM\Database\Models\Accounts::class, $value);
     }
 
         //  This is an alias function of supportSeekerAccount
     public function support_seeker_account_id($value)
     {
-        return $this->supportSeekerAccount($value);
+        return $this->supportSeekerAccountId($value);
     }
 
     public function commonCategoryId($value)
     {
-            $commonCategory = \NextDeveloper\Commons\Database\Models\Categories::where('uuid', $value)->first();
-
-        if($commonCategory) {
-            return $this->builder->where('common_category_id', '=', $commonCategory->id);
-        }
+        return FilterClauses::linkedId($this->builder, 'common_category_id', \NextDeveloper\Commons\Database\Models\Categories::class, $value);
     }
 
         //  This is an alias function of commonCategory
     public function common_category_id($value)
     {
-        return $this->commonCategory($value);
+        return $this->commonCategoryId($value);
     }
 
     public function resolvedByUserId($value)
     {
-            $resolvedByUser = \NextDeveloper\IAM\Database\Models\Users::where('uuid', $value)->first();
+        return FilterClauses::linkedId($this->builder, 'resolved_by_user_id', \NextDeveloper\IAM\Database\Models\Users::class, $value);
+    }
 
-        if($resolvedByUser) {
-            return $this->builder->where('resolved_by_user_id', '=', $resolvedByUser->id);
-        }
+    //  This is an alias function of resolvedByUserId
+    public function resolved_by_user_id($value)
+    {
+        return $this->resolvedByUserId($value);
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE

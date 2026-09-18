@@ -4,6 +4,7 @@ namespace NextDeveloper\Support\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
+use NextDeveloper\Commons\Database\Filters\FilterClauses;
 use NextDeveloper\Commons\Database\Models\Categories;
 use NextDeveloper\IAM\Database\Models\Accounts;
 use NextDeveloper\IAM\Database\Models\Users;
@@ -203,36 +204,36 @@ class KbArticlesPerspectiveQueryFilter extends AbstractQueryFilter
 
     public function commonCategoryId($value)
     {
-            $commonCategory = \NextDeveloper\Commons\Database\Models\Categories::where('uuid', $value)->first();
-
-        if($commonCategory) {
-            return $this->builder->where('common_category_id', '=', $commonCategory->id);
-        }
+        return FilterClauses::linkedId($this->builder, 'common_category_id', \NextDeveloper\Commons\Database\Models\Categories::class, $value);
     }
 
         //  This is an alias function of commonCategory
     public function common_category_id($value)
     {
-        return $this->commonCategory($value);
+        return $this->commonCategoryId($value);
     }
 
     public function iamAccountId($value)
     {
-            $iamAccount = \NextDeveloper\IAM\Database\Models\Accounts::where('uuid', $value)->first();
+        return FilterClauses::linkedId($this->builder, 'iam_account_id', \NextDeveloper\IAM\Database\Models\Accounts::class, $value);
+    }
 
-        if($iamAccount) {
-            return $this->builder->where('iam_account_id', '=', $iamAccount->id);
-        }
+    //  This is an alias function of iamAccountId
+    public function iam_account_id($value)
+    {
+        return $this->iamAccountId($value);
     }
 
 
     public function iamUserId($value)
     {
-            $iamUser = \NextDeveloper\IAM\Database\Models\Users::where('uuid', $value)->first();
+        return FilterClauses::linkedId($this->builder, 'iam_user_id', \NextDeveloper\IAM\Database\Models\Users::class, $value);
+    }
 
-        if($iamUser) {
-            return $this->builder->where('iam_user_id', '=', $iamUser->id);
-        }
+    //  This is an alias function of iamUserId
+    public function iam_user_id($value)
+    {
+        return $this->iamUserId($value);
     }
 
 
