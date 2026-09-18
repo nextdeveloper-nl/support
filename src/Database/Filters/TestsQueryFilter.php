@@ -4,6 +4,7 @@ namespace NextDeveloper\Support\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
+use NextDeveloper\Commons\Database\Filters\FilterClauses;
         
 
 /**
@@ -109,32 +110,24 @@ class TestsQueryFilter extends AbstractQueryFilter
 
     public function supportTicketId($value)
     {
-            $supportTicket = \NextDeveloper\Support\Database\Models\Tickets::where('uuid', $value)->first();
-
-        if($supportTicket) {
-            return $this->builder->where('support_ticket_id', '=', $supportTicket->id);
-        }
+        return FilterClauses::linkedId($this->builder, 'support_ticket_id', \NextDeveloper\Support\Database\Models\Tickets::class, $value);
     }
 
         //  This is an alias function of supportTicket
     public function support_ticket_id($value)
     {
-        return $this->supportTicket($value);
+        return $this->supportTicketId($value);
     }
 
     public function commonActionId($value)
     {
-            $commonAction = \NextDeveloper\Commons\Database\Models\Actions::where('uuid', $value)->first();
-
-        if($commonAction) {
-            return $this->builder->where('common_action_id', '=', $commonAction->id);
-        }
+        return FilterClauses::linkedId($this->builder, 'common_action_id', \NextDeveloper\Commons\Database\Models\Actions::class, $value);
     }
 
         //  This is an alias function of commonAction
     public function common_action_id($value)
     {
-        return $this->commonAction($value);
+        return $this->commonActionId($value);
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE

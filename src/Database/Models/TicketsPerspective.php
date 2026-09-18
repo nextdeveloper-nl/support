@@ -59,6 +59,9 @@ use NextDeveloper\Commons\Database\Traits\HasObject;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon $deleted_at
+ * @property integer $resolved_by_user_id
+ * @property string $resolved_by_name
+ * @property string $kind
  */
 class TicketsPerspective extends Model
 {
@@ -112,6 +115,9 @@ class TicketsPerspective extends Model
             'responsible_name',
             'category_name',
             'csat_score',
+            'resolved_by_user_id',
+            'resolved_by_name',
+            'kind',
     ];
 
     /**
@@ -169,6 +175,9 @@ class TicketsPerspective extends Model
     'responsible_name' => 'string',
     'category_name' => 'string',
     'csat_score' => 'integer',
+    'resolved_by_user_id' => 'integer',
+    'resolved_by_name' => 'string',
+    'kind' => 'string',
     'created_at' => 'datetime',
     'updated_at' => 'datetime',
     'deleted_at' => 'datetime',

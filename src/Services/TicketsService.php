@@ -2,7 +2,11 @@
 
 namespace NextDeveloper\Support\Services;
 
+use Illuminate\Http\Exceptions\HttpResponseException;
+use NextDeveloper\Commons\Common\Enums\GenericErrorCodes;
 use NextDeveloper\Commons\Helpers\DatabaseHelper;
+use NextDeveloper\Commons\Helpers\ObjectHelper;
+use Illuminate\Support\Str;
 use NextDeveloper\IAM\Database\Models\Accounts;
 use NextDeveloper\IAM\Database\Scopes\AuthorizationScope;
 use NextDeveloper\IAM\Helpers\UserHelper;
@@ -51,6 +55,7 @@ class TicketsService extends AbstractTicketsService
         }
 
         $data = self::normalizeCategory($data);
+        $data = self::resolveObject($data);
 
         $ticket = parent::update($id, $data);
 
@@ -58,7 +63,7 @@ class TicketsService extends AbstractTicketsService
         // ticket as a bug report) - the job self-guards on tag presence and on
         // already having filed, so it's safe to dispatch unconditionally here as
         // well, mirroring create() below.
-        \App\Jobs\Support\CreateGithubIssueForCustomerBugReportJob::dispatch($ticket);
+        self::fileBugReport($ticket);
 
         return $ticket;
     }
@@ -67,6 +72,7 @@ class TicketsService extends AbstractTicketsService
     {
         $data = self::resolveSeekerAccount($data);
         $data = self::normalizeCategory($data);
+        $data = self::resolveObject($data);
         $data = self::applySlaDueDates($data);
 
         $ticket = parent::create($data);
@@ -77,9 +83,85 @@ class TicketsService extends AbstractTicketsService
 
         // Customer bug reports (tagged with config('support.bug_report_tag') in the
         // main app) get auto-filed as a GitHub issue.
-        \App\Jobs\Support\CreateGithubIssueForCustomerBugReportJob::dispatch($ticket);
+        self::fileBugReport($ticket);
 
         return $ticket;
+    }
+
+    /**
+     * Files a customer bug report as a GitHub issue. The job belongs to the host application;
+     * an application that does not ship it does not file, rather than failing a write that has
+     * already been committed.
+     */
+    private static function fileBugReport(Tickets $ticket): void
+    {
+        $job = '\App\Jobs\Support\CreateGithubIssueForCustomerBugReportJob';
+
+        if (class_exists($job)) {
+            $job::dispatch($ticket);
+        }
+    }
+
+    /**
+     * A ticket can be opened on a record (fixlean: the station card an error card is about). The
+     * API names it by object_type - the model class or its public Vendor\Package\Model form - and
+     * uuid; the columns hold the class and the internal id. The caller has to be able to see the
+     * record. Sending object_id as null detaches it.
+     *
+     * Integer ids from internal callers are stored as given.
+     *
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    private static function resolveObject(array $data): array
+    {
+        if (! array_key_exists('object_id', $data)) {
+            if (array_key_exists('object_type', $data)) {
+                self::refuse('object_id', 'object_id is required with object_type.');
+            }
+
+            return $data;
+        }
+
+        if ($data['object_id'] === null) {
+            $data['object_type'] = null;
+
+            return $data;
+        }
+
+        if (is_int($data['object_id'])) {
+            return $data;
+        }
+
+        if (! is_string($data['object_id']) || ! Str::isUuid($data['object_id'])) {
+            self::refuse('object_id', 'object_id must be a uuid.');
+        }
+
+        $class = ObjectHelper::getModelClass($data['object_type'] ?? null);
+
+        if (! $class) {
+            self::refuse('object_type', 'object_type must name a model, for example NextDeveloper\Fixlean\StationCards.');
+        }
+
+        $object = $class::where('uuid', $data['object_id'])->first();
+
+        if (! $object) {
+            self::refuse('object_id', 'object_id must be the id of an existing record you can see.');
+        }
+
+        $data['object_type'] = $class;
+        $data['object_id'] = $object->id;
+
+        return $data;
+    }
+
+    private static function refuse(string $field, string $message): never
+    {
+        throw new HttpResponseException(response()->json([
+            'message' => 'Validation failed. Please fix the values you are providing and try again.',
+            'code' => GenericErrorCodes::VALIDATION_FAILED,
+            'errors' => [$field => [$message]],
+        ], 422));
     }
 
     /**
