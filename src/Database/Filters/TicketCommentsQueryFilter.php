@@ -113,30 +113,6 @@ class TicketCommentsQueryFilter extends AbstractQueryFilter
         return $this->deletedAtEnd($value);
     }
 
-    public function iamAccountId($value)
-    {
-        return FilterClauses::linkedId($this->builder, 'iam_account_id', \NextDeveloper\IAM\Database\Models\Accounts::class, $value);
-    }
-
-    //  This is an alias function of iamAccountId
-    public function iam_account_id($value)
-    {
-        return $this->iamAccountId($value);
-    }
-
-
-    public function iamUserId($value)
-    {
-        return FilterClauses::linkedId($this->builder, 'iam_user_id', \NextDeveloper\IAM\Database\Models\Users::class, $value);
-    }
-
-    //  This is an alias function of iamUserId
-    public function iam_user_id($value)
-    {
-        return $this->iamUserId($value);
-    }
-
-
     public function supportTicketId($value)
     {
         return FilterClauses::linkedId($this->builder, 'support_ticket_id', \NextDeveloper\Support\Database\Models\Tickets::class, $value);

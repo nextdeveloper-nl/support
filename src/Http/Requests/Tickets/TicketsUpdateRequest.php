@@ -24,7 +24,8 @@ class TicketsUpdateRequest extends AbstractFormRequest
         'watcher_user_ids' => 'nullable',
         'watcher_account_ids' => 'nullable',
         'support_seeker_account_id' => 'nullable|exists:iam_accounts,uuid|uuid',
-        'status' => 'string',
+        //  status is intentionally not accepted here - it must go through the ChangeStatus
+        //  action so is_closed/resolved_at/reopened_count/audit stay in sync (see ChangeStatus::handle()).
         'common_category_id' => 'nullable|exists:common_categories,uuid|uuid',
         'first_response_at' => 'nullable|date',
         'resolved_at' => 'nullable|date',
