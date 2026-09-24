@@ -16,11 +16,11 @@ class TicketsPerspectiveUpdateRequest extends AbstractFormRequest
             'title' => 'nullable|string',
         'description' => 'nullable|string',
         'tags' => 'nullable',
-        'is_closed' => 'nullable|boolean',
+        //  status/is_closed are intentionally not accepted here - they must go through the
+        //  ChangeStatus action so resolved_at/reopened_count/audit stay in sync (see ChangeStatus::handle()).
         'is_public' => 'nullable|boolean',
         'level' => 'nullable|integer',
         'priority' => 'nullable|integer',
-        'status' => 'nullable|string',
         'common_category_id' => 'nullable|exists:common_categories,uuid|uuid',
         'response_time' => 'nullable|date',
         'first_response_at' => 'nullable|date',
