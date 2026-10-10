@@ -34,6 +34,7 @@ CREATE TABLE support_tickets (
     sla_resolution_breached      boolean NOT NULL DEFAULT false,
     resolved_by_user_id          bigint, -- [ro][alias:iam_user_id] User who resolved the ticket (set with resolved_at).
     kind                         text, -- What the ticket is to the application that opened it; fixlean: error_card, urgent_call, suggestion. NULL for ordinary support tickets.
+    number                       text, -- [ro] The ticket's human number, given by the application that opened it (fixlean: <INSTALL>-ERR-000445). NULL when it gives none.
     CONSTRAINT support_tickets_status_chk CHECK ((status = ANY (ARRAY['open'::text, 'pending'::text, 'waiting_on_customer'::text, 'resolved'::text, 'closed'::text]))),
     CONSTRAINT support_tickets_common_category_id_fk FOREIGN KEY (common_category_id) REFERENCES common_categories(id),
     CONSTRAINT support_tickets_pkey PRIMARY KEY (id)
@@ -44,3 +45,7 @@ CREATE INDEX support_tickets_kind_idx ON public.support_tickets USING btree (kin
 CREATE INDEX support_tickets_responsible_user_idx ON public.support_tickets USING btree (responsible_user_id);
 CREATE INDEX support_tickets_sla_due_open_idx ON public.support_tickets USING btree (sla_resolution_due_at) WHERE ((deleted_at IS NULL) AND (status <> ALL (ARRAY['resolved'::text, 'closed'::text])));
 CREATE INDEX support_tickets_status_idx ON public.support_tickets USING btree (status);
+
+-- Added after the first release of the table: the application's ticket number.
+ALTER TABLE public.support_tickets ADD COLUMN IF NOT EXISTS number text;
+CREATE UNIQUE INDEX IF NOT EXISTS support_tickets_number_uniq ON public.support_tickets USING btree (number) WHERE ((number IS NOT NULL) AND (deleted_at IS NULL));

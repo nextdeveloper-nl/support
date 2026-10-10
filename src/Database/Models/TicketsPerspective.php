@@ -62,6 +62,7 @@ use NextDeveloper\Commons\Database\Traits\HasObject;
  * @property integer $resolved_by_user_id
  * @property string $resolved_by_name
  * @property string $kind
+ * @property string $number
  */
 class TicketsPerspective extends Model
 {
@@ -118,6 +119,7 @@ class TicketsPerspective extends Model
             'resolved_by_user_id',
             'resolved_by_name',
             'kind',
+            'number',
     ];
 
     /**
@@ -178,6 +180,7 @@ class TicketsPerspective extends Model
     'resolved_by_user_id' => 'integer',
     'resolved_by_name' => 'string',
     'kind' => 'string',
+    'number' => 'string',
     'created_at' => 'datetime',
     'updated_at' => 'datetime',
     'deleted_at' => 'datetime',

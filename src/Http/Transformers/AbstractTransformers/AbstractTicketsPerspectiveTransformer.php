@@ -111,6 +111,7 @@ class AbstractTicketsPerspectiveTransformer extends AbstractTransformer
             'resolved_by_user_id'  =>  $resolvedByUserId ? $resolvedByUserId->uuid : null,
             'resolved_by_name'  =>  $model->resolved_by_name,
             'kind'  =>  $model->kind,
+            'number'  =>  $model->number,
             ]
         );
     }

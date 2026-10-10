@@ -98,6 +98,7 @@ class AbstractTicketsTransformer extends AbstractTransformer
             'sla_resolution_breached'  =>  $model->sla_resolution_breached,
             'resolved_by_user_id'  =>  $resolvedByUserId ? $resolvedByUserId->uuid : null,
             'kind'  =>  $model->kind,
+            'number'  =>  $model->number,
             ]
         );
     }

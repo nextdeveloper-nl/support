@@ -32,6 +32,8 @@ class TicketWorkflowService
      * Moves a ticket through its lifecycle and keeps the derived columns consistent:
      *  - resolved/closed stamp resolved_at, resolved_by_user_id (the caller) and is_closed
      *  - the first move to pending stamps first_response_at
+     *  - with support.workflow.release_unassigns, pending -> open (a release) clears
+     *    responsible_user_id and first_response_at
      *  - re-opening a resolved/closed ticket increments reopened_count and clears resolution
      *  - first-contact-resolution is flagged when a ticket is resolved without ever re-opening
      *
@@ -94,6 +96,13 @@ class TicketWorkflowService
         //  Work starts when a ticket first goes to pending; later round trips keep the first stamp.
         if ($new === 'pending' && ! $ticket->first_response_at) {
             $data['first_response_at'] = now();
+        }
+
+        //  Giving the work back (pending -> open), where the application wants it: whoever took it
+        //  and when are cleared, so the next one to take it starts a fresh trail.
+        if ($new === 'open' && $old === 'pending' && config('support.workflow.release_unassigns', false)) {
+            $data['responsible_user_id'] = null;
+            $data['first_response_at'] = null;
         }
 
         TicketsService::privilegedUpdate($ticket, $data);
