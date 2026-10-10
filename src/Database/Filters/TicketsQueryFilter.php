@@ -78,6 +78,33 @@ class TicketsQueryFilter extends AbstractQueryFilter
         );
     }
 
+    /**
+     * The ticket number, or part of it (case-insensitive).
+     */
+    public function number($value)
+    {
+        return $this->builder->where(
+            $this->builder->getModel()->qualifyColumn('number'),
+            'ilike',
+            '%' . addcslashes((string) $value, '%_\\') . '%'
+        );
+    }
+
+    /**
+     * Tickets opened by one of these users (comma separated uuids). Kept for the applications that
+     * list "opened by me / by them": the rows are still limited by the caller's scope.
+     */
+    public function iamUserId($value)
+    {
+        return FilterClauses::linkedId($this->builder, 'iam_user_id', \NextDeveloper\IAM\Database\Models\Users::class, $value);
+    }
+
+    //  This is an alias function of iamUserId
+    public function iam_user_id($value)
+    {
+        return $this->iamUserId($value);
+    }
+
         //  This is an alias function of objectType
     public function object_type($value)
     {

@@ -19,5 +19,11 @@ return [
          * close their own ticket.
          */
         'agent_roles' => ['support-admin', 'support-specialist'],
+
+        /*
+         * Whether moving a ticket from pending back to open (giving the work back) clears who took
+         * it (responsible_user_id) and when (first_response_at). Off: the assignment stays.
+         */
+        'release_unassigns' => false,
     ],
 ];

@@ -51,6 +51,7 @@ use NextDeveloper\Commons\Database\Traits\HasObject;
  * @property boolean $sla_resolution_breached
  * @property integer $resolved_by_user_id
  * @property string $kind
+ * @property string $number
  */
 class Tickets extends Model
 {
@@ -96,6 +97,7 @@ class Tickets extends Model
             'sla_resolution_breached',
             'resolved_by_user_id',
             'kind',
+            'number',
     ];
 
     /**
@@ -148,6 +150,7 @@ class Tickets extends Model
     'sla_resolution_breached' => 'boolean',
     'resolved_by_user_id' => 'integer',
     'kind' => 'string',
+    'number' => 'string',
     ];
 
     /**

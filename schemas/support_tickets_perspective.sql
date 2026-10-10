@@ -46,7 +46,8 @@ SELECT t.id,
     -- Appended, not inserted: CREATE OR REPLACE VIEW can only add columns at the end.
     t.resolved_by_user_id,
     rbu.fullname AS resolved_by_name,
-    t.kind
+    t.kind,
+    t.number
    FROM support_tickets t
      LEFT JOIN iam_users u ON u.id = t.iam_user_id
      LEFT JOIN iam_accounts a ON a.id = t.iam_account_id
