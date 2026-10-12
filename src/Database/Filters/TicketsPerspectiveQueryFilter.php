@@ -45,9 +45,22 @@ class TicketsPerspectiveQueryFilter extends AbstractQueryFilter
     }
 
 
+    /**
+     * One status (partial, case-insensitive, as before) or several, comma separated or as an array
+     * (exact workflow statuses, e.g. `open,pending`: the "open and in progress" lists).
+     */
     public function status($value)
     {
-        return $this->builder->where('status', 'ilike', '%' . $value . '%');
+        $statuses = array_values(array_filter(array_map(
+            'trim',
+            is_array($value) ? array_map('strval', $value) : explode(',', (string) $value)
+        ), 'strlen'));
+
+        if (count($statuses) > 1) {
+            return $this->builder->whereIn($this->builder->getModel()->qualifyColumn('status'), $statuses);
+        }
+
+        return $this->builder->where('status', 'ilike', '%' . ($statuses[0] ?? '') . '%');
     }
 
 
