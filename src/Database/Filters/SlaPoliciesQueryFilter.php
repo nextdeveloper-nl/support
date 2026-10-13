@@ -19,6 +19,18 @@ class SlaPoliciesQueryFilter extends AbstractQueryFilter
      */
     protected $builder;
 
+    /**
+     * The ticket kind a policy times (fixlean: alert). `none` lists the ordinary support ones.
+     */
+    public function kind($value)
+    {
+        if ($value === 'none') {
+            return $this->builder->whereNull($this->builder->getModel()->qualifyColumn('kind'));
+        }
+
+        return $this->builder->where($this->builder->getModel()->qualifyColumn('kind'), (string) $value);
+    }
+
     public function name($value)
     {
         return $this->builder->where('name', 'ilike', '%' . $value . '%');
