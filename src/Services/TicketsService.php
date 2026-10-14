@@ -224,6 +224,8 @@ class TicketsService extends AbstractTicketsService
             ->where('priority', $priority)
             ->where('is_active', true)
             ->whereNull('iam_account_id')
+            //  A policy for an application's own ticket kind is chosen by that application.
+            ->whereNull('kind')
             ->whereNull('deleted_at')
             ->first();
 
