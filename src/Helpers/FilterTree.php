@@ -17,9 +17,10 @@ use Throwable;
  * operator the field's type does not take, a value of the wrong shape, a tree too deep or too large -
  * is refused with an InvalidArgumentException.
  *
- * A field definition: `['type' => text|enum|number|date|link|uuid|bool, 'sql' => expression]`, where
- * `{t}` in the expression stands for the queried table. A `link` field also names the `table` whose
- * uuids the values are (`{sql} IN (SELECT id FROM table WHERE uuid IN (...))`).
+ * A field definition: `['type' => text|enum|number|date|link|links|uuid|bool, 'sql' => expression]`,
+ * where `{t}` in the expression stands for the queried table. A `link` field also names the `table`
+ * whose uuids the values are (`{sql} IN (SELECT id FROM table WHERE uuid IN (...))`); a `links` field
+ * is an array of such ids (`bigint[]`) and matches when it shares one of them (`&&`).
  *
  * Text conditions are Turkish-insensitive (TurkishFold). Negative conditions match the rows with no
  * value too ("does not contain X" holds for an empty description), as the client's own filter does.
@@ -38,7 +39,7 @@ final class FilterTree
     /** Characters in one text value. */
     public const MAX_TEXT = 200;
 
-    public const TYPES = ['text', 'enum', 'number', 'date', 'link', 'uuid', 'bool'];
+    public const TYPES = ['text', 'enum', 'number', 'date', 'link', 'links', 'uuid', 'bool'];
 
     /** Short and alternative operator names → the client's operator ids. */
     private const ALIASES = [
@@ -60,6 +61,7 @@ final class FilterTree
         'number' => ['equals', 'notEquals', 'gt', 'gte', 'lt', 'lte', 'between', 'anyOf', 'noneOf', 'isEmpty', 'isNotEmpty'],
         'date' => ['gt', 'gte', 'lt', 'lte', 'between', 'isEmpty', 'isNotEmpty'],
         'link' => ['equals', 'notEquals', 'anyOf', 'noneOf', 'isEmpty', 'isNotEmpty'],
+        'links' => ['equals', 'notEquals', 'anyOf', 'noneOf', 'isEmpty', 'isNotEmpty'],
         'uuid' => ['equals', 'notEquals', 'anyOf', 'noneOf', 'isEmpty', 'isNotEmpty'],
         'bool' => ['isTrue', 'isFalse'],
     ];
@@ -209,7 +211,7 @@ final class FilterTree
             throw new InvalidArgumentException('The filter field "' . $name . '" does not take the operator "' . Str::limit($operator, 20) . '".');
         }
 
-        if ($type === 'link' && !preg_match('/^[a-z_][a-z0-9_]*$/', (string) ($field['table'] ?? ''))) {
+        if (in_array($type, ['link', 'links'], true) && !preg_match('/^[a-z_][a-z0-9_]*$/', (string) ($field['table'] ?? ''))) {
             throw new InvalidArgumentException('The filter field "' . $name . '" is not defined correctly.');
         }
 
@@ -217,7 +219,11 @@ final class FilterTree
         $value = $node['v'] ?? null;
 
         if ($operator === 'isEmpty' || $operator === 'isNotEmpty') {
-            $empty = $type === 'text' ? '(' . $sql . ' IS NULL OR btrim(' . $sql . ') = \'\')' : '(' . $sql . ' IS NULL)';
+            $empty = match ($type) {
+                'text' => '(' . $sql . ' IS NULL OR btrim(' . $sql . ') = \'\')',
+                'links' => '(' . $sql . ' IS NULL OR cardinality(' . $sql . ') = 0)',
+                default => '(' . $sql . ' IS NULL)',
+            };
 
             return [$operator === 'isEmpty' ? $empty : 'NOT ' . $empty, []];
         }
@@ -229,6 +235,15 @@ final class FilterTree
             'date' => self::date($sql, $operator, $value, $name),
             'link' => self::listed(
                 $sql . ' IN (SELECT id FROM ' . ($field['table'] ?? '') . ' WHERE uuid IN (%s))',
+                $operator,
+                $value,
+                $name,
+                fn ($v) => self::uuid($v, $name),
+                '?::uuid',
+                $sql
+            ),
+            'links' => self::listed(
+                $sql . ' && ARRAY(SELECT id FROM ' . ($field['table'] ?? '') . ' WHERE uuid IN (%s))',
                 $operator,
                 $value,
                 $name,
