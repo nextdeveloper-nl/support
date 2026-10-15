@@ -100,6 +100,33 @@ class FilterTreeTest extends TestCase
         );
     }
 
+    public function test_id_arrays_match_when_they_share_an_id(): void
+    {
+        $uuid = '0b9d6c1e-6f43-4a5b-9a39-2a3f0e6d1c11';
+        $fields = ['station' => ['type' => 'links', 'sql' => '{t}.station_card_ids', 'table' => 'fixlean_station_cards']];
+
+        [$sql, $bindings] = FilterTree::compile(['f' => 'station', 'o' => 'anyOf', 'v' => [$uuid, strtoupper($uuid)]], $fields, 'plans');
+
+        $this->assertSame('plans.station_card_ids && ARRAY(SELECT id FROM fixlean_station_cards WHERE uuid IN (?::uuid, ?::uuid))', $sql);
+        $this->assertSame([$uuid, $uuid], $bindings);
+
+        [$sql] = FilterTree::compile(['f' => 'station', 'o' => 'noneOf', 'v' => [$uuid]], $fields, 'plans');
+
+        $this->assertSame(
+            '(plans.station_card_ids IS NULL OR NOT plans.station_card_ids && ARRAY(SELECT id FROM fixlean_station_cards WHERE uuid IN (?::uuid)))',
+            $sql
+        );
+
+        $this->assertSame(
+            ['(plans.station_card_ids IS NULL OR cardinality(plans.station_card_ids) = 0)', []],
+            FilterTree::compile(['f' => 'station', 'o' => 'isEmpty'], $fields, 'plans')
+        );
+
+        $this->expectException(InvalidArgumentException::class);
+
+        FilterTree::compile(['f' => 'station', 'o' => 'anyOf', 'v' => [$uuid]], ['station' => ['type' => 'links', 'sql' => '{t}.ids']], 'plans');
+    }
+
     public function test_dates_numbers_and_scores(): void
     {
         [$sql, $bindings] = self::compile(['f' => 'resolved_at', 'o' => 'dateBetween', 'v' => ['from' => '2026-10-01T00:00:00.000Z', 'to' => null]]);
