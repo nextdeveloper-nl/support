@@ -4,11 +4,15 @@ namespace NextDeveloper\Support\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
+use Illuminate\Validation\ValidationException;
 use NextDeveloper\Commons\Database\Filters\FilterClauses;
 use NextDeveloper\Commons\Database\Models\Categories;
 use NextDeveloper\IAM\Database\Models\Accounts;
 use NextDeveloper\IAM\Database\Models\AccountTypes;
 use NextDeveloper\IAM\Database\Models\Users;
+use NextDeveloper\Support\Helpers\FilterTree;
+use NextDeveloper\Support\Helpers\TicketFilterFields;
+use NextDeveloper\Support\Helpers\TurkishFold;
                         
 
 /**
@@ -35,13 +39,13 @@ class TicketsPerspectiveQueryFilter extends AbstractQueryFilter
 
     public function title($value)
     {
-        return $this->builder->where('title', 'ilike', '%' . $value . '%');
+        return TurkishFold::whereContains($this->builder, 'title', $value);
     }
 
 
     public function description($value)
     {
-        return $this->builder->where('description', 'ilike', '%' . $value . '%');
+        return TurkishFold::whereContains($this->builder, 'description', $value);
     }
 
 
@@ -133,7 +137,7 @@ class TicketsPerspectiveQueryFilter extends AbstractQueryFilter
 
     public function fullname($value)
     {
-        return $this->builder->where('fullname', 'ilike', '%' . $value . '%');
+        return TurkishFold::whereContains($this->builder, 'fullname', $value);
     }
 
 
@@ -179,7 +183,7 @@ class TicketsPerspectiveQueryFilter extends AbstractQueryFilter
 
     public function responsibleName($value)
     {
-        return $this->builder->where('responsible_name', 'ilike', '%' . $value . '%');
+        return TurkishFold::whereContains($this->builder, 'responsible_name', $value);
     }
 
         //  This is an alias function of responsibleName
@@ -190,7 +194,7 @@ class TicketsPerspectiveQueryFilter extends AbstractQueryFilter
 
     public function categoryName($value)
     {
-        return $this->builder->where('category_name', 'ilike', '%' . $value . '%');
+        return TurkishFold::whereContains($this->builder, 'category_name', $value);
     }
 
         //  This is an alias function of categoryName
@@ -513,6 +517,25 @@ class TicketsPerspectiveQueryFilter extends AbstractQueryFilter
     public function iam_account_type_id($value)
     {
         return $this->iamAccountTypeId($value);
+    }
+
+    /**
+     * Advanced filter: AND / OR groups of field conditions, as JSON (see TicketFilterFields for the
+     * fields, FilterTree for the operators). Applied with the caller's scope like any other filter.
+     */
+    public function filterTree($value)
+    {
+        try {
+            return FilterTree::apply($this->builder, $value, TicketFilterFields::fields());
+        } catch (\InvalidArgumentException $exception) {
+            throw ValidationException::withMessages(['filter_tree' => [$exception->getMessage()]]);
+        }
+    }
+
+    //  This is an alias function of filterTree
+    public function filter_tree($value)
+    {
+        return $this->filterTree($value);
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE

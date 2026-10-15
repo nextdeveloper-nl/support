@@ -4,10 +4,14 @@ namespace NextDeveloper\Support\Database\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 use NextDeveloper\Commons\Database\Filters\AbstractQueryFilter;
+use Illuminate\Validation\ValidationException;
 use NextDeveloper\Commons\Database\Filters\FilterClauses;
 use NextDeveloper\Commons\Database\Models\Categories;
 use NextDeveloper\IAM\Database\Models\Accounts;
 use NextDeveloper\IAM\Database\Models\Users;
+use NextDeveloper\Support\Helpers\FilterTree;
+use NextDeveloper\Support\Helpers\TicketFilterFields;
+use NextDeveloper\Support\Helpers\TurkishFold;
                     
 
 /**
@@ -34,13 +38,13 @@ class TicketsQueryFilter extends AbstractQueryFilter
 
     public function title($value)
     {
-        return $this->builder->where('title', 'ilike', '%' . $value . '%');
+        return TurkishFold::whereContains($this->builder, 'title', $value);
     }
 
 
     public function description($value)
     {
-        return $this->builder->where('description', 'ilike', '%' . $value . '%');
+        return TurkishFold::whereContains($this->builder, 'description', $value);
     }
 
 
@@ -425,6 +429,25 @@ class TicketsQueryFilter extends AbstractQueryFilter
     public function resolved_by_user_id($value)
     {
         return $this->resolvedByUserId($value);
+    }
+
+    /**
+     * Advanced filter: AND / OR groups of field conditions, as JSON (see TicketFilterFields for the
+     * fields, FilterTree for the operators). Applied with the caller's scope like any other filter.
+     */
+    public function filterTree($value)
+    {
+        try {
+            return FilterTree::apply($this->builder, $value, TicketFilterFields::fields());
+        } catch (\InvalidArgumentException $exception) {
+            throw ValidationException::withMessages(['filter_tree' => [$exception->getMessage()]]);
+        }
+    }
+
+    //  This is an alias function of filterTree
+    public function filter_tree($value)
+    {
+        return $this->filterTree($value);
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
