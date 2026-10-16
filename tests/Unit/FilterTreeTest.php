@@ -196,6 +196,20 @@ class FilterTreeTest extends TestCase
         ], self::T);
     }
 
+    public function test_groups_nest_down_to_the_depth_limit(): void
+    {
+        $tree = ['f' => 'title', 'o' => 'contains', 'v' => 'a'];
+
+        for ($i = 0; $i < FilterTree::MAX_DEPTH; $i++) {
+            $tree = ['c' => $i % 2 ? 'and' : 'or', 'r' => [$tree, ['f' => 'title', 'o' => 'contains', 'v' => 'b' . $i]]];
+        }
+
+        [$sql, $bindings] = self::compile($tree);
+
+        $this->assertStringStartsWith(str_repeat('(', FilterTree::MAX_DEPTH) . 'translate(', $sql);
+        $this->assertCount(FilterTree::MAX_DEPTH + 1, $bindings);
+    }
+
     public function test_empty_groups_add_nothing(): void
     {
         $this->assertNull(self::compile(['c' => 'and', 'r' => []]));
@@ -220,7 +234,7 @@ class FilterTreeTest extends TestCase
     {
         $deep = ['f' => 'title', 'o' => 'contains', 'v' => 'a'];
 
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < FilterTree::MAX_DEPTH + 1; $i++) {
             $deep = ['c' => 'and', 'r' => [$deep]];
         }
 
