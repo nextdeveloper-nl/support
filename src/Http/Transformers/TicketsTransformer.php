@@ -5,6 +5,7 @@ namespace NextDeveloper\Support\Http\Transformers;
 use NextDeveloper\Commons\Common\Cache\CacheHelper;
 use NextDeveloper\Commons\Database\Models\States;
 use NextDeveloper\Commons\Helpers\ObjectHelper;
+use NextDeveloper\Support\Helpers\TicketPayloads;
 use NextDeveloper\IAM\Database\Models\Users;
 use NextDeveloper\IAM\Http\Transformers\PublicUsersTransformer;
 use NextDeveloper\Support\Database\Models\TicketComments;
@@ -36,7 +37,8 @@ class TicketsTransformer extends AbstractTicketsTransformer
                 //  The record the ticket is opened on is stored as a class and an internal id.
                 $transformed['object_id'] = ObjectHelper::getObjectUuid($model->object_type, $model->object_id);
 
-                return $transformed;
+                //  What the application tells about that record (TicketPayloads).
+                return TicketPayloads::decorate($transformed, $model);
             }
         );
     }
