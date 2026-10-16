@@ -35,8 +35,12 @@ use Throwable;
  */
 final class FilterTree
 {
-    /** Group nesting, the root group included (the client allows two levels below the root). */
-    public const MAX_DEPTH = 4;
+    /**
+     * Group nesting, the root group included. The client allows two levels below the root; a date
+     * condition there may expand to the request's own status-by-status window (an OR of ANDs), and
+     * the search box can wrap the whole tree in one more AND.
+     */
+    public const MAX_DEPTH = 6;
 
     /** Conditions in one tree. */
     public const MAX_RULES = 60;
