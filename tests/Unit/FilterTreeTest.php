@@ -153,6 +153,49 @@ class FilterTreeTest extends TestCase
         $this->assertStringContainsString('stations WHERE id = support_tickets_perspective.object_id', $sql);
     }
 
+    public function test_person_and_category_names_search_as_semi_joins(): void
+    {
+        [$sql, $bindings] = self::compile(['c' => 'or', 'r' => [
+            ['f' => 'created_by_name', 'o' => 'contains', 'v' => 'Güler'],
+            ['f' => 'responsible_name', 'o' => 'contains', 'v' => 'guler'],
+            ['f' => 'category_name', 'o' => 'equals', 'v' => 'Isıtıcı Arızası'],
+        ]]);
+
+        $this->assertSame(
+            '(support_tickets_perspective.iam_user_id IN (SELECT u.id FROM iam_users u WHERE '
+            . TurkishFold::sql("COALESCE(u.fullname, '')") . ' LIKE ?)'
+            . ' OR support_tickets_perspective.responsible_user_id IN (SELECT u.id FROM iam_users u WHERE '
+            . TurkishFold::sql("COALESCE(u.fullname, '')") . ' LIKE ?)'
+            . ' OR support_tickets_perspective.common_category_id IN (SELECT cc.id FROM common_categories cc WHERE '
+            . TurkishFold::sql("COALESCE(cc.name, '')") . ' = ?))',
+            $sql
+        );
+        $this->assertSame(['%guler%', '%guler%', 'isitici arizasi'], $bindings);
+    }
+
+    public function test_negative_and_empty_name_conditions_keep_the_scalar_subquery(): void
+    {
+        $name = '(SELECT u.fullname FROM iam_users u WHERE u.id = support_tickets_perspective.iam_user_id)';
+
+        $this->assertSame(
+            [TurkishFold::sql('COALESCE(' . $name . ", '')") . ' NOT LIKE ?', ['%guler%']],
+            self::compile(['f' => 'created_by_name', 'o' => 'notContains', 'v' => 'Güler'])
+        );
+        $this->assertSame(
+            ['(' . $name . ' IS NULL OR btrim(' . $name . ') = \'\')', []],
+            self::compile(['f' => 'created_by_name', 'o' => 'isEmpty'])
+        );
+    }
+
+    public function test_a_related_field_without_its_match_placeholder_is_refused(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        FilterTree::compile(['f' => 'name', 'o' => 'contains', 'v' => 'a'], [
+            'name' => ['type' => 'text', 'sql' => '{t}.name', 'related' => ['sql' => '{t}.id IN (SELECT 1)', 'text' => 'x.name']],
+        ], self::T);
+    }
+
     public function test_empty_groups_add_nothing(): void
     {
         $this->assertNull(self::compile(['c' => 'and', 'r' => []]));
