@@ -184,14 +184,7 @@ class TicketsService extends AbstractTicketsService
 
         //  Scoped lookup on purpose: the caller may only act on a ticket they can already
         //  see, exactly as the generated (queued) dispatcher did.
-        $ticket = Tickets::where('uuid', $objectId)->first();
-
-        if (! $ticket) {
-            return [
-                'status' => 'error',
-                'message' => 'Ticket not found.',
-            ];
-        }
+        $ticket = self::visibleOrNotFound($objectId);
 
         $payload = $params[0] ?? [];
 
@@ -206,6 +199,28 @@ class TicketsService extends AbstractTicketsService
             'auto-route-ticket' => TicketWorkflowService::autoRoute($ticket),
             'escalate-on-sla-breach' => TicketWorkflowService::escalateOnSlaBreach($ticket, $payload['type'] ?? null),
         };
+    }
+
+    /**
+     * The ticket the caller can see, or a 404 like the one a read of it answers with. A write on a
+     * ticket outside the caller's scope (a workflow action, a comment) is refused before it starts,
+     * instead of answering 200 with an error inside or failing on the missing id with a 500.
+     */
+    public static function visibleOrNotFound(mixed $uuid): Tickets
+    {
+        $ticket = is_string($uuid) && Str::isUuid($uuid) ? Tickets::where('uuid', $uuid)->first() : null;
+
+        if (! $ticket) {
+            throw new HttpResponseException(response()->json([
+                'error' => [
+                    'status' => 404,
+                    'code' => 'ERROR-NOT-FOUND',
+                    'message' => 'Ticket not found.',
+                ],
+            ], 404));
+        }
+
+        return $ticket;
     }
 
     /**

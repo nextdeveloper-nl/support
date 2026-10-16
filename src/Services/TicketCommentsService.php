@@ -26,6 +26,11 @@ class TicketCommentsService extends AbstractTicketCommentsService
             $data['is_internal'] = false;
         }
 
+        //  Only on a ticket the caller can see (the form request checks only that it exists).
+        if (array_key_exists('support_ticket_id', $data) && ! is_int($data['support_ticket_id'])) {
+            TicketsService::visibleOrNotFound($data['support_ticket_id']);
+        }
+
         $comment = parent::create($data);
 
         self::stampFirstResponse($comment);
