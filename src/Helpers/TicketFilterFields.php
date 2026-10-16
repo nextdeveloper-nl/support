@@ -18,13 +18,16 @@ final class TicketFilterFields
 
     private const USER_NAME = '(SELECT u.fullname FROM iam_users u WHERE u.id = {t}.%s)';
 
+    /** The same name as a semi-join for the search box (FilterTree `related`). */
+    private const USER_MATCH = '{t}.%s IN (SELECT u.id FROM iam_users u WHERE {match})';
+
     /**
-     * @var array<string, array{type: string, sql: string, table?: string}>
+     * @var array<string, array{type: string, sql: string, table?: string, related?: array{sql: string, text: string}}>
      */
     private static array $extensions = [];
 
     /**
-     * @return array<string, array{type: string, sql: string, table?: string}>
+     * @return array<string, array{type: string, sql: string, table?: string, related?: array{sql: string, text: string}}>
      */
     public static function fields(): array
     {
@@ -39,13 +42,17 @@ final class TicketFilterFields
             'status' => ['type' => 'enum', 'sql' => '{t}.status'],
             'priority' => ['type' => 'number', 'sql' => '{t}.priority'],
             'category' => ['type' => 'link', 'sql' => '{t}.common_category_id', 'table' => 'common_categories'],
-            'category_name' => ['type' => 'text', 'sql' => '(SELECT cc.name FROM common_categories cc WHERE cc.id = {t}.common_category_id)'],
+            'category_name' => [
+                'type' => 'text',
+                'sql' => '(SELECT cc.name FROM common_categories cc WHERE cc.id = {t}.common_category_id)',
+                'related' => ['sql' => '{t}.common_category_id IN (SELECT cc.id FROM common_categories cc WHERE {match})', 'text' => 'cc.name'],
+            ],
             'created_by' => ['type' => 'link', 'sql' => '{t}.iam_user_id', 'table' => 'iam_users'],
-            'created_by_name' => ['type' => 'text', 'sql' => sprintf(self::USER_NAME, 'iam_user_id')],
+            'created_by_name' => self::userName('iam_user_id'),
             'responsible' => ['type' => 'link', 'sql' => '{t}.responsible_user_id', 'table' => 'iam_users'],
-            'responsible_name' => ['type' => 'text', 'sql' => sprintf(self::USER_NAME, 'responsible_user_id')],
+            'responsible_name' => self::userName('responsible_user_id'),
             'resolved_by' => ['type' => 'link', 'sql' => '{t}.resolved_by_user_id', 'table' => 'iam_users'],
-            'resolved_by_name' => ['type' => 'text', 'sql' => sprintf(self::USER_NAME, 'resolved_by_user_id')],
+            'resolved_by_name' => self::userName('resolved_by_user_id'),
             'created_at' => ['type' => 'date', 'sql' => '{t}.created_at'],
             'updated_at' => ['type' => 'date', 'sql' => '{t}.updated_at'],
             'first_response_at' => ['type' => 'date', 'sql' => '{t}.first_response_at'],
@@ -68,9 +75,23 @@ final class TicketFilterFields
     }
 
     /**
+     * The full name of the user a ticket column names.
+     *
+     * @return array{type: string, sql: string, related: array{sql: string, text: string}}
+     */
+    private static function userName(string $column): array
+    {
+        return [
+            'type' => 'text',
+            'sql' => sprintf(self::USER_NAME, $column),
+            'related' => ['sql' => sprintf(self::USER_MATCH, $column), 'text' => 'u.fullname'],
+        ];
+    }
+
+    /**
      * Adds (or replaces) a field. Called by applications at boot.
      *
-     * @param  array{type: string, sql: string, table?: string}  $definition
+     * @param  array{type: string, sql: string, table?: string, related?: array{sql: string, text: string}}  $definition
      */
     public static function extend(string $name, array $definition): void
     {

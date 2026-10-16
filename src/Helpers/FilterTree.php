@@ -24,6 +24,14 @@ use Throwable;
  *
  * Text conditions are Turkish-insensitive (TurkishFold). Negative conditions match the rows with no
  * value too ("does not contain X" holds for an empty description), as the client's own filter does.
+ *
+ * A text field read from a related row (a user's name, a category's name) may also name that row as
+ * `related`: `['sql' => '{t}.fk IN (SELECT r.id FROM ... WHERE {match})', 'text' => 'r.name']`. Its
+ * positive conditions (contains, starts / ends with, equals, any of) then compile to that semi-join,
+ * `{match}` being the condition on the related text: the related rows are searched once, not once
+ * per row as the field's own scalar subquery would be (a search box over thousands of rows). The
+ * negative and empty conditions keep the scalar expression, so a row without a related row still
+ * counts as "does not contain".
  */
 final class FilterTree
 {
@@ -35,6 +43,9 @@ final class FilterTree
 
     /** Values in one list condition. */
     public const MAX_VALUES = 500;
+
+    /** Text operators a `related` field compiles to its semi-join. */
+    private const RELATED_OPERATORS = ['contains', 'startsWith', 'endsWith', 'equals', 'anyOf'];
 
     /** Characters in one text value. */
     public const MAX_TEXT = 200;
@@ -95,7 +106,7 @@ final class FilterTree
     /**
      * The tree as one condition: `[sql, bindings]`, or null when it holds no condition.
      *
-     * @param  array<string, array{type: string, sql: string, table?: string}>  $fields
+     * @param  array<string, array{type: string, sql: string, table?: string, related?: array{sql: string, text: string}}>  $fields
      * @return array{0: string, 1: array<int, mixed>}|null
      */
     public static function compile(mixed $tree, array $fields, string $table): ?array
@@ -111,7 +122,7 @@ final class FilterTree
      * @template T of \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
      *
      * @param  T  $builder
-     * @param  array<string, array{type: string, sql: string, table?: string}>  $fields
+     * @param  array<string, array{type: string, sql: string, table?: string, related?: array{sql: string, text: string}}>  $fields
      * @return T
      */
     public static function apply($builder, mixed $tree, array $fields)
@@ -228,6 +239,10 @@ final class FilterTree
             return [$operator === 'isEmpty' ? $empty : 'NOT ' . $empty, []];
         }
 
+        if ($type === 'text' && isset($field['related']) && in_array($operator, self::RELATED_OPERATORS, true)) {
+            return self::related($field['related'], $table, $operator, $value, $name);
+        }
+
         return match ($type) {
             'text' => self::text($sql, $operator, $value, $name),
             'enum' => self::listed($sql, $operator, $value, $name, fn ($v) => self::scalarText($v, $name), '?'),
@@ -284,6 +299,27 @@ final class FilterTree
             'equals' => [$folded . ' = ?', [TurkishFold::text($text)]],
             'notEquals' => [$folded . ' <> ?', [TurkishFold::text($text)]],
         };
+    }
+
+    /**
+     * A positive text condition on a related row's text, as the field's semi-join (`{match}` takes
+     * the condition on the related text).
+     *
+     * @param  array{sql?: mixed, text?: mixed}  $related
+     * @return array{0: string, 1: array<int, mixed>}
+     */
+    private static function related(array $related, string $table, string $operator, mixed $value, string $name): array
+    {
+        $template = $related['sql'] ?? null;
+        $text = $related['text'] ?? null;
+
+        if (!is_string($template) || !is_string($text) || !str_contains($template, '{match}')) {
+            throw new InvalidArgumentException('The filter field "' . $name . '" is not defined correctly.');
+        }
+
+        [$match, $bindings] = self::text($text, $operator, $value, $name);
+
+        return [str_replace('{match}', $match, str_replace('{t}', $table, $template)), $bindings];
     }
 
     /**
