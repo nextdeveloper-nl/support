@@ -22,7 +22,8 @@ use Throwable;
  * whose uuids the values are (`{sql} IN (SELECT id FROM table WHERE uuid IN (...))`); a `links` field
  * is an array of such ids (`bigint[]`) and matches when it shares one of them (`&&`).
  *
- * Text conditions are Turkish-insensitive (TurkishFold). Negative conditions match the rows with no
+ * Text conditions are Turkish-aware (TurkishFold): a plain ASCII text is folded with the column, a
+ * text with a Turkish letter is matched case-insensitively without folding. Negative conditions match the rows with no
  * value too ("does not contain X" holds for an empty description), as the client's own filter does.
  *
  * A text field read from a related row (a user's name, a category's name) may also name that row as
@@ -280,11 +281,12 @@ final class FilterTree
      */
     private static function text(string $sql, string $operator, mixed $value, string $name): array
     {
-        $folded = TurkishFold::sql('COALESCE(' . $sql . ", '')");
+        $column = 'COALESCE(' . $sql . ", '')";
 
+        // A list's values are picked option labels: compared folded, whatever letters they have.
         if ($operator === 'anyOf' || $operator === 'noneOf') {
             $values = array_map(fn ($v) => TurkishFold::text(self::scalarText($v, $name)), self::values($value, $name));
-            $in = $folded . ' IN (' . implode(', ', array_fill(0, count($values), '?')) . ')';
+            $in = TurkishFold::sql($column) . ' IN (' . implode(', ', array_fill(0, count($values), '?')) . ')';
 
             return [$operator === 'anyOf' ? $in : 'NOT ' . $in, $values];
         }
@@ -295,13 +297,16 @@ final class FilterTree
             throw new InvalidArgumentException('The filter field "' . $name . '" needs a text.');
         }
 
+        // A typed text decides the comparison: folded in plain ASCII, the Turkish way with a Turkish letter (#704).
+        $compared = TurkishFold::sql($column, $text);
+
         return match ($operator) {
-            'contains' => [$folded . ' LIKE ?', [TurkishFold::pattern($text)]],
-            'notContains' => [$folded . ' NOT LIKE ?', [TurkishFold::pattern($text)]],
-            'startsWith' => [$folded . ' LIKE ?', [TurkishFold::pattern($text, '')]],
-            'endsWith' => [$folded . ' LIKE ?', [TurkishFold::pattern($text, '%', '')]],
-            'equals' => [$folded . ' = ?', [TurkishFold::text($text)]],
-            'notEquals' => [$folded . ' <> ?', [TurkishFold::text($text)]],
+            'contains' => [$compared . ' LIKE ?', [TurkishFold::pattern($text)]],
+            'notContains' => [$compared . ' NOT LIKE ?', [TurkishFold::pattern($text)]],
+            'startsWith' => [$compared . ' LIKE ?', [TurkishFold::pattern($text, '')]],
+            'endsWith' => [$compared . ' LIKE ?', [TurkishFold::pattern($text, '%', '')]],
+            'equals' => [$compared . ' = ?', [TurkishFold::needle($text)]],
+            'notEquals' => [$compared . ' <> ?', [TurkishFold::needle($text)]],
         };
     }
 
