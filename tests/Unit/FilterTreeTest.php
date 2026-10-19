@@ -36,6 +36,55 @@ class FilterTreeTest extends TestCase
         );
     }
 
+    /**
+     * #704: a typed Turkish letter is meant. "Isı" finds "Isı" / "ISI" but not "Değişimi" (which
+     * folds to "degisimi", containing "isi"); a plain ASCII needle still folds ("guler" finds
+     * "Güler", "toplanti odasi" finds "Toplantı Odası").
+     */
+    public function test_a_needle_with_a_turkish_letter_is_matched_without_folding(): void
+    {
+        $this->assertFalse(TurkishFold::keepsLetters('toplanti odasi'));
+        $this->assertFalse(TurkishFold::keepsLetters('ISI'));
+        $this->assertTrue(TurkishFold::keepsLetters('Isı'));
+        $this->assertTrue(TurkishFold::keepsLetters('İSTASYON'));
+
+        $this->assertSame('ısı', TurkishFold::needle('Isı'));
+        $this->assertSame('ısı', TurkishFold::needle('ISı'));
+        $this->assertSame('istasyon çağrı', TurkishFold::needle('İSTASYON ÇAĞRI'));
+        $this->assertSame('guler', TurkishFold::needle('guler'));
+        $this->assertSame('toplanti odasi', TurkishFold::needle('Toplanti Odasi'));
+        $this->assertSame(
+            "lower(translate(title, 'IİÇĞÖŞÜÂÎÛ', 'ıiçğöşüâîû'))",
+            TurkishFold::sql('title', 'Isı')
+        );
+        $this->assertSame(TurkishFold::sql('title'), TurkishFold::sql('title', 'isi'));
+
+        // The column side, as PostgreSQL lowers it after the translate (ASCII only in a C locale).
+        $column = fn (string $value) => strtolower(strtr($value, ['I' => 'ı', 'İ' => 'i', 'Ç' => 'ç', 'Ğ' => 'ğ', 'Ö' => 'ö', 'Ş' => 'ş', 'Ü' => 'ü']));
+
+        $this->assertStringContainsString(TurkishFold::needle('Isı'), $column('Dolap Isı Kontrolü'));
+        $this->assertStringContainsString(TurkishFold::needle('Isı'), $column('DOLAP ISI'));
+        $this->assertStringNotContainsString(TurkishFold::needle('Isı'), $column('Merdane Değişimi'));
+        $this->assertStringContainsString(TurkishFold::needle('Güler'), $column('Müslim GÜLER'));
+        $this->assertStringContainsString(TurkishFold::text('isi'), TurkishFold::text('Merdane Değişimi'));
+        $this->assertStringContainsString(TurkishFold::text('guler'), TurkishFold::text('Müslim Güler'));
+        $this->assertStringContainsString(TurkishFold::text('toplanti odasi'), TurkishFold::text('Toplantı Odası'));
+
+        [$sql, $bindings] = self::compile(['c' => 'or', 'r' => [
+            ['f' => 'title', 'o' => 'contains', 'v' => 'Isı'],
+            ['f' => 'title', 'o' => 'contains', 'v' => 'isi'],
+            ['f' => 'title', 'o' => 'anyOf', 'v' => ['Isı Kontrolü']],
+        ]]);
+
+        $title = "COALESCE(support_tickets_perspective.title, '')";
+        $this->assertSame(
+            '(' . TurkishFold::sql($title, 'Isı') . ' LIKE ? OR ' . TurkishFold::sql($title) . ' LIKE ? OR '
+            . TurkishFold::sql($title) . ' IN (?))',
+            $sql
+        );
+        $this->assertSame(['%ısı%', '%isi%', 'isi kontrolu'], $bindings);
+    }
+
     public function test_and_or_groups_nest_with_bound_values(): void
     {
         [$sql, $bindings] = self::compile([
@@ -66,7 +115,7 @@ class FilterTreeTest extends TestCase
         $this->assertSame([$folded . ' NOT LIKE ?', ['%test%']], self::compile(['f' => 'title', 'o' => 'notContains', 'v' => 'TEST']));
         $this->assertSame([$folded . ' = ?', ['sasa']], self::compile(['f' => 'title', 'o' => 'equals', 'v' => 'Sasa']));
         $this->assertSame([$folded . ' <> ?', ['sasa']], self::compile(['f' => 'title', 'o' => 'neq', 'v' => 'Sasa']));
-        $this->assertSame([$folded . ' LIKE ?', ['baski%']], self::compile(['f' => 'title', 'o' => 'startsWith', 'v' => 'Baskı']));
+        $this->assertSame([$folded . ' LIKE ?', ['baski%']], self::compile(['f' => 'title', 'o' => 'startsWith', 'v' => 'Baski']));
         $this->assertSame([$folded . ' LIKE ?', ['%fan']], self::compile(['f' => 'title', 'o' => 'endsWith', 'v' => 'Fan']));
         $this->assertSame(
             ['(support_tickets_perspective.title IS NULL OR btrim(support_tickets_perspective.title) = \'\')', []],
@@ -163,14 +212,14 @@ class FilterTreeTest extends TestCase
 
         $this->assertSame(
             '(support_tickets_perspective.iam_user_id IN (SELECT u.id FROM iam_users u WHERE '
-            . TurkishFold::sql("COALESCE(u.fullname, '')") . ' LIKE ?)'
+            . TurkishFold::sql("COALESCE(u.fullname, '')", 'Güler') . ' LIKE ?)'
             . ' OR support_tickets_perspective.responsible_user_id IN (SELECT u.id FROM iam_users u WHERE '
             . TurkishFold::sql("COALESCE(u.fullname, '')") . ' LIKE ?)'
             . ' OR support_tickets_perspective.common_category_id IN (SELECT cc.id FROM common_categories cc WHERE '
-            . TurkishFold::sql("COALESCE(cc.name, '')") . ' = ?))',
+            . TurkishFold::sql("COALESCE(cc.name, '')", 'Isıtıcı') . ' = ?))',
             $sql
         );
-        $this->assertSame(['%guler%', '%guler%', 'isitici arizasi'], $bindings);
+        $this->assertSame(['%güler%', '%guler%', 'ısıtıcı arızası'], $bindings);
     }
 
     public function test_negative_and_empty_name_conditions_keep_the_scalar_subquery(): void
@@ -179,7 +228,7 @@ class FilterTreeTest extends TestCase
 
         $this->assertSame(
             [TurkishFold::sql('COALESCE(' . $name . ", '')") . ' NOT LIKE ?', ['%guler%']],
-            self::compile(['f' => 'created_by_name', 'o' => 'notContains', 'v' => 'Güler'])
+            self::compile(['f' => 'created_by_name', 'o' => 'notContains', 'v' => 'Guler'])
         );
         $this->assertSame(
             ['(' . $name . ' IS NULL OR btrim(' . $name . ') = \'\')', []],
