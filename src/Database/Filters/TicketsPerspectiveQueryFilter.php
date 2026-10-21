@@ -539,4 +539,20 @@ class TicketsPerspectiveQueryFilter extends AbstractQueryFilter
     }
 
     // EDIT AFTER HERE - WARNING: ABOVE THIS LINE MAY BE REGENERATED AND YOU MAY LOSE CODE
+
+    /**
+     * The tickets a user resolved (fixlean #733). The tickets list filtered on it and the
+     * perspective did not: Profilim › Tamamlanan listed every resolved ticket of the plant instead
+     * of the user's own.
+     */
+    public function resolvedByUserId($value)
+    {
+        return FilterClauses::linkedId($this->builder, 'resolved_by_user_id', Users::class, $value);
+    }
+
+    //  This is an alias function of resolvedByUserId
+    public function resolved_by_user_id($value)
+    {
+        return $this->resolvedByUserId($value);
+    }
 }
